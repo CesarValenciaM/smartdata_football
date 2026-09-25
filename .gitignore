@@ -1,0 +1,26 @@
+# Local / OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
+
+# Temp / build helpers
+_tmp*/
+_build*.py
+_rename.py
+*.log
+
+# Secrets
+*.pem
+credentials.json
