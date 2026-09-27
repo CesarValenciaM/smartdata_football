@@ -1,0 +1,6 @@
+league_id,league_ref,name,country,country_code,confederation,tier,founded_year
+1,premier_league,Premier League,England,ENG,UEFA,1,1992
+2,la_liga,La Liga,Spain,ESP,UEFA,1,1929
+3,serie_a,Serie A,Italy,ITA,UEFA,1,1898
+4,bundesliga,Bundesliga,Germany,GER,UEFA,1,1963
+5,ligue_1,Ligue 1,France,FRA,UEFA,1,1932
