@@ -134,7 +134,7 @@ jobs:
                 "source": "WORKSPACE",
                 "base_parameters": {
                   "storageName": "s3smartdata-bucket",
-                  "catalogwk": "football_prod"
+                  "catalogo": "football_prod"
                 }
               },
               "existing_cluster_id": "$CLUSTER_ID",
