@@ -17,8 +17,8 @@ jobs:
       run: |
         ORIGIN_HOST=${{ secrets.DATABRICKS_ORIGIN_HOST }}
         ORIGIN_TOKEN=${{ secrets.DATABRICKS_ORIGIN_TOKEN }}
-        NOTEBOOK_BASE="/Workspace/Users/smartdata_gr16@outlook.com/smartdata_football/proceso"
-        NOTEBOOKS=("1.Preparacion_Ambiente" "2.Ingest_leagues_data" "2.Ingest_matches_data" "2.Ingest_clubs" "3.Transform" "4.Load" "5.Grants_Medallion")  # Agrega más según necesites
+        NOTEBOOK_BASE="/Workspace/Users/cvalenciam@uni.pe/smartdata_football/proceso"
+        NOTEBOOKS=("1.Preparacion_Ambiente" "2.Ingest_clubs" "2.Ingest_leagues_data" "2.Ingest_matches_data" "3.Transform" "4.Load" "5.Grants_Medallion")  # Agrega más según necesitesas
         mkdir -p notebooks_to_deploy
         for nb in "${NOTEBOOKS[@]}"; do
           echo "Exportando $nb en modo raw..."
@@ -32,7 +32,7 @@ jobs:
       run: |
         DEST_HOST=${{ secrets.DATABRICKS_DEST_HOST }}
         DEST_TOKEN=${{ secrets.DATABRICKS_DEST_TOKEN }}
-        DEST_BASE="/smartdata_football"
+        DEST_BASE="/proyecto/notebooks"
         for file in notebooks_to_deploy/*.py; do
           name=$(basename "$file" .py)
           dest_path="$DEST_BASE/$name"
@@ -59,7 +59,7 @@ jobs:
       run: |
         DEST_HOST=${{ secrets.DATABRICKS_DEST_HOST }}
         DEST_TOKEN=${{ secrets.DATABRICKS_DEST_TOKEN }}
-        WORKFLOW_NAME="WF_FOOTBALL"
+        WORKFLOW_NAME="WF_ADB"
         
         echo "Verificando si existe el workflow: $WORKFLOW_NAME"
         
@@ -87,7 +87,7 @@ jobs:
       run: |
         DEST_HOST=${{ secrets.DATABRICKS_DEST_HOST }}
         DEST_TOKEN=${{ secrets.DATABRICKS_DEST_TOKEN }}
-        CLUSTER_NAME="cluster_SD"
+        CLUSTER_NAME="ClusterSD"
         
         echo "Buscando cluster existente: $CLUSTER_NAME"
         
@@ -111,29 +111,30 @@ jobs:
           exit 1
         fi
     
-    - name: Create Databricks Workflow WF_FOOTBALL
+    - name: Create Databricks Workflow WF_ADB
       run: |
         DEST_HOST=${{ secrets.DATABRICKS_DEST_HOST }}
         DEST_TOKEN=${{ secrets.DATABRICKS_DEST_TOKEN }}
-        DEST_BASE="/smartdata_football"
+        DEST_BASE="/proyecto/notebooks"
         CLUSTER_ID="${{ env.CLUSTER_ID }}"
         
-        echo "Creando workflow: WF_FOOTBALL con cluster existente ID: $CLUSTER_ID"
+        echo "Creando workflow: WF_ADB con cluster existente ID: $CLUSTER_ID"
         
         # Crear el JSON del workflow usando cluster existente
         cat > workflow_config.json << EOF
         {
-          "name": "WF_FOOTBALL",
+          "name": "WF_ADB",
           "format": "MULTI_TASK",
           "tasks": [
             {
-              "task_key": "prepambiente",
-              "description": "Ejecuta notebook prepambiente",
+              "task_key": "preparacion_ambiente",
+              "description": "Ejecuta notebook 1.Preparacion_Ambiente con parámetros",
               "notebook_task": {
-                "notebook_path": "/smartdata_football/1.Preparacion_Ambiente",
+                "notebook_path": "/proyecto/notebooks/1.Preparacion_Ambiente",
                 "source": "WORKSPACE",
                 "base_parameters": {
-                  "storageName": "adlssmartdata1702"
+                  "storageName": "s3smartdata-bucket",
+                  "catalogwk": "football_prod"
                 }
               },
               "existing_cluster_id": "$CLUSTER_ID",
@@ -141,60 +142,16 @@ jobs:
               "max_retries": 2
             },
             {
-              "task_key": "ingest_leagues",
-              "description": "Ejecuta notebook ingest_leagues",
-              "notebook_task": {
-                "notebook_path": "/smartdata_football/2.Ingest_leagues_data",
-                "source": "WORKSPACE",
-                "base_parameters": {
-                  "container": "raw",
-                  "catalogo": "football_dev",
-                  "esquema": "bronze",
-                  "storageName": "adlssmartdata1702"
-                }
-              },
-              "existing_cluster_id": "$CLUSTER_ID",
-              "timeout_seconds": 3600,
-              "max_retries": 2,
-              "depends_on": [
-                {
-                  "task_key": "prepambiente"
-                }
-              ]
-            },
-            {
-              "task_key": "ingest_matches",
-              "description": "Ejecuta notebook ingest_matches",
-              "notebook_task": {
-                "notebook_path": "/smartdata_football/2.Ingest_matches_data",
-                "source": "WORKSPACE",
-                "base_parameters": {
-                  "container": "raw",
-                  "catalogo": "football_dev",
-                  "esquema": "bronze",
-                  "storageName": "adlssmartdata1702"
-                }
-              },
-              "existing_cluster_id": "$CLUSTER_ID",
-              "timeout_seconds": 3600,
-              "max_retries": 2,
-              "depends_on": [
-                {
-                  "task_key": "prepambiente"
-                }
-              ]
-            },
-            {
               "task_key": "ingest_clubs",
-              "description": "Ejecuta notebook ingest_clubs",
+              "description": "Ejecuta notebook 2.Ingest_clubs con parámetros",
               "notebook_task": {
-                "notebook_path": "/smartdata_football/2.Ingest_clubs",
+                "notebook_path": "/proyecto/notebooks/2.Ingest_clubs",
                 "source": "WORKSPACE",
                 "base_parameters": {
                   "container": "raw",
-                  "catalogo": "football_dev",
+                  "catalogo": "football_prod",
                   "esquema": "bronze",
-                  "storageName": "adlssmartdata1702"
+                  "storageName": "s3smartdata-bucket"
                 }
               },
               "existing_cluster_id": "$CLUSTER_ID",
@@ -202,18 +159,62 @@ jobs:
               "max_retries": 2,
               "depends_on": [
                 {
-                  "task_key": "prepambiente"
+                  "task_key": "preparacion_ambiente"
+                }
+              ]
+            },
+            {
+              "task_key": "ingest_leagues_data",
+              "description": "Ejecuta notebook 2.Ingest_leagues_data con parámetros",
+              "notebook_task": {
+                "notebook_path": "/proyecto/notebooks/2.Ingest_leagues_data",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "container": "raw",
+                  "catalogo": "football_prod",
+                  "esquema": "bronze",
+                  "storageName": "s3smartdata-bucket"
+                }
+              },
+              "existing_cluster_id": "$CLUSTER_ID",
+              "timeout_seconds": 3600,
+              "max_retries": 2,
+              "depends_on": [
+                {
+                  "task_key": "preparacion_ambiente"
+                }
+              ]
+            },
+            {
+              "task_key": "ingest_matches_data",
+              "description": "Ejecuta notebook 2.Ingest_matches_data con parámetros",
+              "notebook_task": {
+                "notebook_path": "/proyecto/notebooks/2.Ingest_matches_data",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "container": "raw",
+                  "catalogo": "football_prod",
+                  "esquema": "bronze",
+                  "storageName": "s3smartdata-bucket"
+                }
+              },
+              "existing_cluster_id": "$CLUSTER_ID",
+              "timeout_seconds": 3600,
+              "max_retries": 2,
+              "depends_on": [
+                {
+                  "task_key": "preparacion_ambiente"
                 }
               ]
             },
             {
               "task_key": "transform",
-              "description": "Ejecuta notebook transform",
+              "description": "Ejecuta notebook transform con parámetros",
               "notebook_task": {
-                "notebook_path": "/smartdata_football/3.Transform",
+                "notebook_path": "/proyecto/notebooks/3.Transform",
                 "source": "WORKSPACE",
                 "base_parameters": {
-                  "catalogo": "football_dev",
+                  "catalogo": "football_prod",
                   "esquema_source": "bronze",
                   "esquema_sink": "silver"
                 }
@@ -223,24 +224,24 @@ jobs:
               "max_retries": 2,
               "depends_on": [
                 {
-                  "task_key": "ingest_leagues"
-                },
-                {
-                  "task_key": "ingest_matches"
-                },
-                {
                   "task_key": "ingest_clubs"
+                },
+                {
+                  "task_key": "ingest_leagues_data"
+                },
+                {
+                  "task_key": "ingest_matches_data"
                 }
               ]
             },
             {
-              "task_key": "load",
-              "description": "Ejecuta notebook load",
+              "task_key": "Load",
+              "description": "Ejecuta notebook Load con parámetros",
               "notebook_task": {
-                "notebook_path": "/smartdata_football/4.Load",
+                "notebook_path": "/proyecto/notebooks/4.Load",
                 "source": "WORKSPACE",
                 "base_parameters": {
-                  "catalogo": "football_dev",
+                  "catalogo": "football_prod",
                   "esquema_source": "silver",
                   "esquema_sink": "gold"
                 }
@@ -256,17 +257,20 @@ jobs:
             },
             {
               "task_key": "grants",
-              "description": "Ejecuta notebook grants",
+              "description": "Ejecuta notebook Grants con parámetros",
               "notebook_task": {
-                "notebook_path": "/smartdata_football/5.Grants_Medallion",
-                "source": "WORKSPACE"
+                "notebook_path": "/proyecto/notebooks/5.Grants_Medallion",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "catalogo": "football_prod"
+                }
               },
               "existing_cluster_id": "$CLUSTER_ID",
               "timeout_seconds": 3600,
               "max_retries": 2,
               "depends_on": [
                 {
-                  "task_key": "load"
+                  "task_key": "Load"
                 }
               ]
             }
@@ -287,7 +291,7 @@ jobs:
           "tags": {
             "environment": "production",
             "created_by": "github_actions",
-            "project": "smartdata_football",
+            "project": "automated_deployment",
             "cluster_used": "cluster_SD"
           }
         }
@@ -306,7 +310,7 @@ jobs:
         job_id=$(echo "$create_response" | jq -r '.job_id')
         
         if [ "$job_id" != "" ] && [ "$job_id" != "null" ]; then
-          echo "✅ Workflow 'WF_FOOTBALL' creado exitosamente con ID: $job_id"
+          echo "✅ Workflow 'WF_ADB' creado exitosamente con ID: $job_id"
           
           # Obtener detalles del workflow creado
           workflow_details=$(curl -s -X GET \
@@ -325,7 +329,7 @@ jobs:
       run: |
         DEST_HOST=${{ secrets.DATABRICKS_DEST_HOST }}
         DEST_TOKEN=${{ secrets.DATABRICKS_DEST_TOKEN }}
-        WORKFLOW_NAME="WF_FOOTBALL"
+        WORKFLOW_NAME="WF_ADB"
         
         echo "🔍 Validando la configuración del workflow creado..."
         
@@ -360,11 +364,11 @@ jobs:
           exit 1
         fi
     
-    - name: Execute Workflow WF_FOOTBALL
+    - name: Execute Workflow WF_ADB
       run: |
         DEST_HOST=${{ secrets.DATABRICKS_DEST_HOST }}
         DEST_TOKEN=${{ secrets.DATABRICKS_DEST_TOKEN }}
-        WORKFLOW_NAME="WF_FOOTBALL"
+        WORKFLOW_NAME="WF_ADB"
         
         echo "🚀 Ejecutando workflow: $WORKFLOW_NAME"
         
@@ -491,16 +495,12 @@ jobs:
         echo "🎉 ¡Despliegue y ejecución completados exitosamente!"
         echo ""
         echo "📊 Resumen:"
-        echo "✅ Notebooks desplegados: 1.Preparacion_Ambiente, 2.Ingest_leagues_data, 2.Ingest_matches_data, 2.Ingest_clubs, 3.Transform, 4.Load, 5.Grants_Medallion"
-        echo "✅ Workflow creado: WF_FOOTBALL"
+        echo "✅ Notebooks desplegados: ntbk_1, ntbk_2"
+        echo "✅ Workflow creado: WF_ADB"
         echo "✅ Tareas configuradas:"
-        echo "   - prepambiente"
-        echo "   - ingest_leagues / ingest_matches / ingest_clubs"
-        echo "   - transform"
-        echo "   - load"
-        echo "   - grants"
+        echo "   - tarea1_notebook1 (ntbk_1)"
+        echo "   - tarea2_notebook2 (ntbk_2)"
         echo "✅ Cluster existente: cluster_SD configurado"
-        echo "✅ Catalogo: football_dev (bronze / silver / gold)"
         echo "🚀 Workflow ejecutado automáticamente"
         echo ""
         echo "🔗 Accede a tu workspace de Databricks para ver los resultados detallados"
