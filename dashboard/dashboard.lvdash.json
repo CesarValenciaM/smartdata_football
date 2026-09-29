@@ -1,0 +1,15 @@
+{
+  "pages": [
+    {
+      "name": "football-kpis",
+      "displayName": "KPIs Futbol Big Five",
+      "pageType": "PAGE_TYPE_CANVAS"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}

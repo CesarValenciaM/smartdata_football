@@ -1,0 +1,1298 @@
+[
+  {
+    "club_id": 1,
+    "club_ref": "ajaccio",
+    "name": "Ajaccio",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 2,
+    "club_ref": "alaves",
+    "name": "Alaves",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 3,
+    "club_ref": "almeria",
+    "name": "Almeria",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 4,
+    "club_ref": "amiens",
+    "name": "Amiens",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 5,
+    "club_ref": "angers",
+    "name": "Angers",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 6,
+    "club_ref": "arsenal",
+    "name": "Arsenal",
+    "country": "England",
+    "city": "London",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 7,
+    "club_ref": "aston_villa",
+    "name": "Aston Villa",
+    "country": "England",
+    "city": "Birmingham",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 8,
+    "club_ref": "atalanta",
+    "name": "Atalanta",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 9,
+    "club_ref": "ath_bilbao",
+    "name": "Ath Bilbao",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 10,
+    "club_ref": "ath_madrid",
+    "name": "Ath Madrid",
+    "country": "Spain",
+    "city": "Madrid",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 11,
+    "club_ref": "augsburg",
+    "name": "Augsburg",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 12,
+    "club_ref": "auxerre",
+    "name": "Auxerre",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 13,
+    "club_ref": "barcelona",
+    "name": "Barcelona",
+    "country": "Spain",
+    "city": "Barcelona",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 14,
+    "club_ref": "bayern_munich",
+    "name": "Bayern Munich",
+    "country": "Germany",
+    "city": "Munich",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 15,
+    "club_ref": "benevento",
+    "name": "Benevento",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 16,
+    "club_ref": "betis",
+    "name": "Betis",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 17,
+    "club_ref": "bielefeld",
+    "name": "Bielefeld",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 18,
+    "club_ref": "bochum",
+    "name": "Bochum",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 19,
+    "club_ref": "bologna",
+    "name": "Bologna",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 20,
+    "club_ref": "bordeaux",
+    "name": "Bordeaux",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 21,
+    "club_ref": "bournemouth",
+    "name": "Bournemouth",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 22,
+    "club_ref": "brentford",
+    "name": "Brentford",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 23,
+    "club_ref": "brescia",
+    "name": "Brescia",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 24,
+    "club_ref": "brest",
+    "name": "Brest",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 25,
+    "club_ref": "brighton",
+    "name": "Brighton",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 26,
+    "club_ref": "burnley",
+    "name": "Burnley",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 27,
+    "club_ref": "cadiz",
+    "name": "Cadiz",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 28,
+    "club_ref": "caen",
+    "name": "Caen",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 29,
+    "club_ref": "cagliari",
+    "name": "Cagliari",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 30,
+    "club_ref": "cardiff",
+    "name": "Cardiff",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 31,
+    "club_ref": "celta",
+    "name": "Celta",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 32,
+    "club_ref": "chelsea",
+    "name": "Chelsea",
+    "country": "England",
+    "city": "London",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 33,
+    "club_ref": "chievo",
+    "name": "Chievo",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 34,
+    "club_ref": "clermont",
+    "name": "Clermont",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 35,
+    "club_ref": "como",
+    "name": "Como",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 36,
+    "club_ref": "cremonese",
+    "name": "Cremonese",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 37,
+    "club_ref": "crotone",
+    "name": "Crotone",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 38,
+    "club_ref": "crystal_palace",
+    "name": "Crystal Palace",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 39,
+    "club_ref": "darmstadt",
+    "name": "Darmstadt",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 40,
+    "club_ref": "dijon",
+    "name": "Dijon",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 41,
+    "club_ref": "dortmund",
+    "name": "Dortmund",
+    "country": "Germany",
+    "city": "Dortmund",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 42,
+    "club_ref": "eibar",
+    "name": "Eibar",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 43,
+    "club_ref": "ein_frankfurt",
+    "name": "Ein Frankfurt",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 44,
+    "club_ref": "elche",
+    "name": "Elche",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 45,
+    "club_ref": "empoli",
+    "name": "Empoli",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 46,
+    "club_ref": "espanol",
+    "name": "Espanol",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 47,
+    "club_ref": "everton",
+    "name": "Everton",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 48,
+    "club_ref": "fc_koln",
+    "name": "FC Koln",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 49,
+    "club_ref": "fiorentina",
+    "name": "Fiorentina",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 50,
+    "club_ref": "fortuna_dusseldorf",
+    "name": "Fortuna Dusseldorf",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 51,
+    "club_ref": "freiburg",
+    "name": "Freiburg",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 52,
+    "club_ref": "frosinone",
+    "name": "Frosinone",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 53,
+    "club_ref": "fulham",
+    "name": "Fulham",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 54,
+    "club_ref": "genoa",
+    "name": "Genoa",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 55,
+    "club_ref": "getafe",
+    "name": "Getafe",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 56,
+    "club_ref": "girona",
+    "name": "Girona",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 57,
+    "club_ref": "granada",
+    "name": "Granada",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 58,
+    "club_ref": "greuther_furth",
+    "name": "Greuther Furth",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 59,
+    "club_ref": "guingamp",
+    "name": "Guingamp",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 60,
+    "club_ref": "hannover",
+    "name": "Hannover",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 61,
+    "club_ref": "heidenheim",
+    "name": "Heidenheim",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 62,
+    "club_ref": "hertha",
+    "name": "Hertha",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 63,
+    "club_ref": "hoffenheim",
+    "name": "Hoffenheim",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 64,
+    "club_ref": "holstein_kiel",
+    "name": "Holstein Kiel",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 65,
+    "club_ref": "huddersfield",
+    "name": "Huddersfield",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 66,
+    "club_ref": "huesca",
+    "name": "Huesca",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 67,
+    "club_ref": "inter",
+    "name": "Inter",
+    "country": "Italy",
+    "city": "Milan",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 68,
+    "club_ref": "ipswich",
+    "name": "Ipswich",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 69,
+    "club_ref": "juventus",
+    "name": "Juventus",
+    "country": "Italy",
+    "city": "Turin",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 70,
+    "club_ref": "las_palmas",
+    "name": "Las Palmas",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 71,
+    "club_ref": "lazio",
+    "name": "Lazio",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 72,
+    "club_ref": "le_havre",
+    "name": "Le Havre",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 73,
+    "club_ref": "lecce",
+    "name": "Lecce",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 74,
+    "club_ref": "leeds",
+    "name": "Leeds",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 75,
+    "club_ref": "leganes",
+    "name": "Leganes",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 76,
+    "club_ref": "leicester",
+    "name": "Leicester",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 77,
+    "club_ref": "lens",
+    "name": "Lens",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 78,
+    "club_ref": "levante",
+    "name": "Levante",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 79,
+    "club_ref": "leverkusen",
+    "name": "Leverkusen",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 80,
+    "club_ref": "lille",
+    "name": "Lille",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 81,
+    "club_ref": "liverpool",
+    "name": "Liverpool",
+    "country": "England",
+    "city": "Liverpool",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 82,
+    "club_ref": "lorient",
+    "name": "Lorient",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 83,
+    "club_ref": "luton",
+    "name": "Luton",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 84,
+    "club_ref": "lyon",
+    "name": "Lyon",
+    "country": "France",
+    "city": "Lyon",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 85,
+    "club_ref": "m_gladbach",
+    "name": "M'gladbach",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 86,
+    "club_ref": "mainz",
+    "name": "Mainz",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 87,
+    "club_ref": "mallorca",
+    "name": "Mallorca",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 88,
+    "club_ref": "man_city",
+    "name": "Man City",
+    "country": "England",
+    "city": "Manchester",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 89,
+    "club_ref": "man_united",
+    "name": "Man United",
+    "country": "England",
+    "city": "Manchester",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 90,
+    "club_ref": "marseille",
+    "name": "Marseille",
+    "country": "France",
+    "city": "Marseille",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 91,
+    "club_ref": "metz",
+    "name": "Metz",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 92,
+    "club_ref": "milan",
+    "name": "Milan",
+    "country": "Italy",
+    "city": "Milan",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 93,
+    "club_ref": "monaco",
+    "name": "Monaco",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 94,
+    "club_ref": "montpellier",
+    "name": "Montpellier",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 95,
+    "club_ref": "monza",
+    "name": "Monza",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 96,
+    "club_ref": "nantes",
+    "name": "Nantes",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 97,
+    "club_ref": "napoli",
+    "name": "Napoli",
+    "country": "Italy",
+    "city": "Naples",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 98,
+    "club_ref": "newcastle",
+    "name": "Newcastle",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 99,
+    "club_ref": "nice",
+    "name": "Nice",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 100,
+    "club_ref": "nimes",
+    "name": "Nimes",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 101,
+    "club_ref": "norwich",
+    "name": "Norwich",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 102,
+    "club_ref": "nott_m_forest",
+    "name": "Nott'm Forest",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 103,
+    "club_ref": "nurnberg",
+    "name": "Nurnberg",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 104,
+    "club_ref": "osasuna",
+    "name": "Osasuna",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 105,
+    "club_ref": "paderborn",
+    "name": "Paderborn",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 106,
+    "club_ref": "paris_sg",
+    "name": "Paris SG",
+    "country": "France",
+    "city": "Paris",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 107,
+    "club_ref": "parma",
+    "name": "Parma",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 108,
+    "club_ref": "rb_leipzig",
+    "name": "RB Leipzig",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 109,
+    "club_ref": "real_madrid",
+    "name": "Real Madrid",
+    "country": "Spain",
+    "city": "Madrid",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 110,
+    "club_ref": "reims",
+    "name": "Reims",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 111,
+    "club_ref": "rennes",
+    "name": "Rennes",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 112,
+    "club_ref": "roma",
+    "name": "Roma",
+    "country": "Italy",
+    "city": "Rome",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 113,
+    "club_ref": "salernitana",
+    "name": "Salernitana",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 114,
+    "club_ref": "sampdoria",
+    "name": "Sampdoria",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 115,
+    "club_ref": "sassuolo",
+    "name": "Sassuolo",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 116,
+    "club_ref": "schalke_04",
+    "name": "Schalke 04",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 117,
+    "club_ref": "sevilla",
+    "name": "Sevilla",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 118,
+    "club_ref": "sheffield_united",
+    "name": "Sheffield United",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 119,
+    "club_ref": "sociedad",
+    "name": "Sociedad",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 120,
+    "club_ref": "southampton",
+    "name": "Southampton",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 121,
+    "club_ref": "spal",
+    "name": "Spal",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 122,
+    "club_ref": "spezia",
+    "name": "Spezia",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 123,
+    "club_ref": "st_etienne",
+    "name": "St Etienne",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 124,
+    "club_ref": "st_pauli",
+    "name": "St Pauli",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 125,
+    "club_ref": "strasbourg",
+    "name": "Strasbourg",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 126,
+    "club_ref": "stuttgart",
+    "name": "Stuttgart",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 127,
+    "club_ref": "torino",
+    "name": "Torino",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 128,
+    "club_ref": "tottenham",
+    "name": "Tottenham",
+    "country": "England",
+    "city": "London",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 129,
+    "club_ref": "toulouse",
+    "name": "Toulouse",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 130,
+    "club_ref": "troyes",
+    "name": "Troyes",
+    "country": "France",
+    "city": "",
+    "founded_year": null,
+    "league_id": 5
+  },
+  {
+    "club_id": 131,
+    "club_ref": "udinese",
+    "name": "Udinese",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 132,
+    "club_ref": "union_berlin",
+    "name": "Union Berlin",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 133,
+    "club_ref": "valencia",
+    "name": "Valencia",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 134,
+    "club_ref": "valladolid",
+    "name": "Valladolid",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 135,
+    "club_ref": "vallecano",
+    "name": "Vallecano",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 136,
+    "club_ref": "venezia",
+    "name": "Venezia",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 137,
+    "club_ref": "verona",
+    "name": "Verona",
+    "country": "Italy",
+    "city": "",
+    "founded_year": null,
+    "league_id": 3
+  },
+  {
+    "club_id": 138,
+    "club_ref": "villarreal",
+    "name": "Villarreal",
+    "country": "Spain",
+    "city": "",
+    "founded_year": null,
+    "league_id": 2
+  },
+  {
+    "club_id": 139,
+    "club_ref": "watford",
+    "name": "Watford",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 140,
+    "club_ref": "werder_bremen",
+    "name": "Werder Bremen",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 141,
+    "club_ref": "west_brom",
+    "name": "West Brom",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 142,
+    "club_ref": "west_ham",
+    "name": "West Ham",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  },
+  {
+    "club_id": 143,
+    "club_ref": "wolfsburg",
+    "name": "Wolfsburg",
+    "country": "Germany",
+    "city": "",
+    "founded_year": null,
+    "league_id": 4
+  },
+  {
+    "club_id": 144,
+    "club_ref": "wolves",
+    "name": "Wolves",
+    "country": "England",
+    "city": "",
+    "founded_year": null,
+    "league_id": 1
+  }
+]
