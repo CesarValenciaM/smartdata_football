@@ -42,8 +42,8 @@ bronze (football_dev.bronze)
         ▼  join + reglas de negocio
 silver (football_dev.silver.matches_transformed)
         │
-        ▼  agregación por temporada / país / liga
-gold (football_dev.gold.season_stats)
+        ▼  agregación por temporada / país / liga  +  tabla de posiciones por club
+gold (football_dev.gold.season_stats  |  football_dev.gold.standings)
 ```
 
 Job `WF_FOOTBALL`:
@@ -67,7 +67,7 @@ Job `WF_FOOTBALL`:
 | Archivo | Formato | Qué contiene | Cómo se usa |
 |---|---|---|---|
 | `datasets/leagues.csv` | CSV con header | 5 ligas: Premier League, La Liga, Serie A, Bundesliga, Ligue 1. Columnas: `league_id`, `league_ref`, `name`, `country`, `country_code`, `confederation`, `tier`, `founded_year`. | Lo lee `2.Ingest_leagues_data`. |
-| `datasets/matches.csv` | CSV con header | 12 532 partidos (2018/19–2024/25). Columnas: `match_id`, `season_year`, `round`, `match_date`, `league_id`, `home_club`, `away_club`, `home_goals`, `away_goals`, `ht_home_goals`, `ht_away_goals`. | Lo lee `2.Ingest_matches_data`. |
+| `datasets/matches.csv` | CSV con header | 12 532 partidos (2018/19–2024/25). Columnas: `match_id`, `season_year`, `round`, `match_date`, `league_id`, `home_club`, `away_club`, `home_goals`, `away_goals`, `ht_home_goals`, `ht_away_goals` y estadísticas por equipo (`home_`/`away_`): `shots`, `shots_on_target`, `corners`, `fouls`, `yellow_cards`, `red_cards`. | Lo lee `2.Ingest_matches_data`. |
 | `datasets/clubs.json` | JSON array | 144 clubes con `club_id`, `club_ref`, `name`, `country`, `city`, `founded_year`, `league_id`. | Lo lee `2.Ingest_clubs`. |
 
 Hay que copiar estos 3 archivos al contenedor ADLS `raw` antes de correr la ingesta.
@@ -80,9 +80,10 @@ Hay que copiar estos 3 archivos al contenedor ADLS `raw` antes de correr la inge
 | `proceso/2.Ingest_leagues_data.ipynb` | Bronze | Lee `leagues.csv`, aplica schema y escribe `football_dev.bronze.leagues` con `ingestion_date`. |
 | `proceso/2.Ingest_matches_data.ipynb` | Bronze | Lee `matches.csv` y escribe `football_dev.bronze.matches` particionado por `season_year`. |
 | `proceso/2.Ingest_clubs.ipynb` | Bronze | Lee `clubs.json` (multiline) y escribe `football_dev.bronze.clubs`. |
-| `proceso/3.Transform.ipynb` | Silver | Cruza las **3** tablas bronze. Filtra `season_year >= 2010`. Crea `result_type`, `goal_diff_category`, `match_intensity`, `is_classic`, `season_age`. Escribe `football_dev.silver.matches_transformed`. |
-| `proceso/4.Load.ipynb` | Gold | Agrega por `season_year`, `country` y `league_name`: conteo, goles, clásicos y victorias locales. Escribe `football_dev.gold.season_stats`. |
-| `proceso/5.Grants_Medallion.ipynb` | Seguridad | `GRANT` de catálogo, schema y `SELECT` al usuario del curso y al grupo `DEs`. |
+| `proceso/3.Transform.ipynb` | Silver | Cruza las **3** tablas bronze. Filtra `season_year >= 2010`. Crea `result_type`, `goal_diff_category`, `match_intensity`, `is_classic`, `season_age`, `ht_result`, `is_comeback`, `second_half_goals` y totales de tiros, córners, faltas y tarjetas. Escribe `football_dev.silver.matches_transformed`. |
+| `proceso/4.Load.ipynb` | Gold | Escribe `football_dev.gold.season_stats` (KPIs por temporada, país y liga) y `football_dev.gold.standings` (tabla de posiciones por temporada y liga, con funciones de ventana). |
+| `proceso/5.Grants_Medallion.ipynb` | Seguridad | `GRANT` de catálogo, schema y `SELECT` sobre las tablas bronze, silver y gold. |
+| `proceso/6.DeltaSharing.ipynb` | Consumo | Crea el share `FOOTBALL_SHARE` con `gold.season_stats` y `gold.standings` y el recipient que consume Power BI. |
 
 Widgets comunes de ingesta: `container`, `catalogo`, `esquema`, `storageName`.  
 Widgets de transform/load: `catalogo`, `esquema_source`, `esquema_sink`.
@@ -109,7 +110,8 @@ Widgets de transform/load: `catalogo`, `esquema_source`, `esquema_sink`.
 
 | Archivo | Qué es |
 |---|---|
-| `dashboard/dashboard.lvdash.json` | Definición de un dashboard de Databricks (página "KPIs Futbol Big Five"). Hay que apuntarlo a `football_dev.gold.season_stats` en el workspace. |
+| `dashboard/Fútbol Big Five - Resumen por Temporada.lvdash.json` | Dashboard de Databricks (AI/BI) sobre `gold.season_stats`. |
+| `dashboard/dashboard.pbix` | Dashboard de Power BI conectado por Delta Sharing (`football_share.gold.season_stats`). |
 
 ### `.github/workflows/` — CI/CD
 
@@ -138,10 +140,33 @@ Columnas de negocio:
 | `match_intensity` | `Baja` (≤2 goles), `Media` (3–4), `Alta` (5+) |
 | `is_classic` | `Clasico` o `Regular` (Madrid–Barça, United–Liverpool, Milan–Inter, etc.) |
 | `season_age` | Años desde la temporada |
+| `ht_result` | Resultado al descanso: `Local`, `Empate` o `Visitante` |
+| `is_comeback` | `true` si el equipo que perdía al descanso ganó el partido |
+| `second_half_goals` | Goles marcados en el segundo tiempo |
+| `home_*` / `away_*` | Tiros, tiros a puerta, córners, faltas, amarillas y rojas por equipo |
+| `total_shots`, `total_shots_on_target`, `total_corners`, `total_fouls`, `total_cards` | Totales del partido |
 
 ### Gold — `football_dev.gold.season_stats`
 
-KPIs por temporada, país y liga: `conteo`, `total_goals`, `max_goals`, `min_goals`, `classic_count`, `home_win_count`.
+KPIs por temporada, país y liga: `conteo`, `total_goals`, `max_goals`, `min_goals`, `classic_count`, `home_win_count`, `away_win_count`, `draw_count`, `comeback_count`, `second_half_goals`, `total_shots`, `total_shots_on_target`, `total_corners`, `total_fouls`, `total_yellow_cards`, `total_red_cards`.
+
+Con ellas se derivan precisión de tiro (`total_shots_on_target / total_shots`), conversión (`total_goals / total_shots_on_target`), tarjetas por partido y % de goles en el segundo tiempo.
+
+### Gold — `football_dev.gold.standings`
+
+Tabla de posiciones por temporada y liga (682 filas: 18 o 20 clubes por liga):
+
+| Columna | Significado |
+|---|---|
+| `position` | Puesto final. Desempate: puntos, diferencia de goles, goles a favor y nombre |
+| `played`, `wins`, `draws`, `losses` | Partidos jugados, ganados, empatados y perdidos |
+| `goals_for`, `goals_against`, `goal_diff`, `points` | Goles a favor, en contra, diferencia y puntos (3 / 1 / 0) |
+| `home_points`, `away_points` | Puntos de local y de visitante |
+| `shots`, `shots_on_target`, `yellow_cards`, `red_cards` | Estadísticas acumuladas del club |
+| `last5_form` | Últimos 5 resultados en orden cronológico, p. ej. `WWDLW` |
+| `zone` | `Campeon`, `Champions League` (2.º–4.º), `Descenso` (últimos 3) o `Media tabla` |
+
+El desempate es simplificado: algunas ligas usan enfrentamiento directo, y Ligue 1 2019/20 se cerró por promedio de puntos (temporada suspendida por COVID).
 
 ## Cómo ejecutarlo
 
@@ -153,6 +178,11 @@ KPIs por temporada, país y liga: `conteo`, `total_goals`, `max_goals`, `min_goa
 ```sql
 SELECT * FROM football_dev.gold.season_stats
 ORDER BY season_year DESC, country;
+
+SELECT season_year, league_name, club, points, last5_form
+FROM football_dev.gold.standings
+WHERE zone = 'Campeon'
+ORDER BY season_year DESC, league_name;
 ```
 
 ## Equivalencia con el proyecto F1
