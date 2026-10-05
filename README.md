@@ -67,7 +67,7 @@ Job `WF_FOOTBALL`:
 | Archivo | Formato | Qué contiene | Cómo se usa |
 |---|---|---|---|
 | `datasets/leagues.csv` | CSV con header | 5 ligas: Premier League, La Liga, Serie A, Bundesliga, Ligue 1. Columnas: `league_id`, `league_ref`, `name`, `country`, `country_code`, `confederation`, `tier`, `founded_year`. | Lo lee `2.Ingest_leagues_data`. |
-| `datasets/matches.csv` | CSV con header | 12 532 partidos (2018/19–2024/25). Columnas: `match_id`, `season_year`, `round`, `match_date`, `league_id`, `home_club`, `away_club`, `home_goals`, `away_goals`, `ht_home_goals`, `ht_away_goals` y estadísticas por equipo (`home_`/`away_`): `shots`, `shots_on_target`, `corners`, `fouls`, `yellow_cards`, `red_cards`. | Lo lee `2.Ingest_matches_data`. |
+| `datasets/matches.csv` | CSV con header | 12 532 partidos (2018/19–2024/25). Columnas: `match_id`, `season_year`, `round`, `match_date`, `league_id`, `home_club`, `away_club`, `home_goals`, `away_goals`, `ht_home_goals`, `ht_away_goals` y estadísticas por equipo (`home_`/`away_`): `shots`, `shots_on_target`, `corners`, `fouls`, `yellow_cards`, `red_cards`. `round` es la jornada (1–38, o 1–34 en ligas de 18 clubes), asignada por orden cronológico dentro de cada liga y temporada; los partidos aplazados cuentan en la jornada en que se jugaron. | Lo lee `2.Ingest_matches_data`. |
 | `datasets/clubs.json` | JSON array | 144 clubes con `club_id`, `club_ref`, `name`, `country`, `city`, `founded_year`, `league_id`. | Lo lee `2.Ingest_clubs`. |
 
 Hay que copiar estos 3 archivos al contenedor ADLS `raw` antes de correr la ingesta.
