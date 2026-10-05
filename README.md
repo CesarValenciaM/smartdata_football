@@ -42,8 +42,12 @@ bronze (football_dev.bronze)
         ▼  join + reglas de negocio
 silver (football_dev.silver.matches_transformed)
         │
-        ▼  agregación por temporada / país / liga  +  tabla de posiciones por club
-gold (football_dev.gold.season_stats  |  football_dev.gold.standings)
+        ├─▶ agregaciones  ─▶ gold.season_stats | gold.standings | gold.calendar_stats
+        │
+        └─▶ Elo partido a partido ─▶ gold.club_elo
+                    │
+                    ▼  forma reciente + Elo → modelo MLflow
+              gold.match_predictions  (+ modelo gold.match_outcome_model en Unity Catalog)
 ```
 
 Job `WF_FOOTBALL`:
@@ -51,8 +55,8 @@ Job `WF_FOOTBALL`:
 1. Preparación del ambiente
 2. Ingesta de ligas, partidos y clubes (en paralelo)
 3. Transformación bronze → silver
-4. Carga silver → gold
-5. Grants de Unity Catalog
+4. Carga silver → gold y, en paralelo, ranking Elo y luego predicción de resultados
+5. Grants de Unity Catalog (espera a la carga y a la predicción)
 
 ## Catálogo de archivos
 
@@ -67,7 +71,7 @@ Job `WF_FOOTBALL`:
 | Archivo | Formato | Qué contiene | Cómo se usa |
 |---|---|---|---|
 | `datasets/leagues.csv` | CSV con header | 5 ligas: Premier League, La Liga, Serie A, Bundesliga, Ligue 1. Columnas: `league_id`, `league_ref`, `name`, `country`, `country_code`, `confederation`, `tier`, `founded_year`. | Lo lee `2.Ingest_leagues_data`. |
-| `datasets/matches.csv` | CSV con header | 12 532 partidos (2018/19–2024/25). Columnas: `match_id`, `season_year`, `round`, `match_date`, `league_id`, `home_club`, `away_club`, `home_goals`, `away_goals`, `ht_home_goals`, `ht_away_goals` y estadísticas por equipo (`home_`/`away_`): `shots`, `shots_on_target`, `corners`, `fouls`, `yellow_cards`, `red_cards`. | Lo lee `2.Ingest_matches_data`. |
+| `datasets/matches.csv` | CSV con header | 12 532 partidos (2018/19–2024/25). Columnas: `match_id`, `season_year`, `round`, `match_date`, `league_id`, `home_club`, `away_club`, `home_goals`, `away_goals`, `ht_home_goals`, `ht_away_goals` y estadísticas por equipo (`home_`/`away_`): `shots`, `shots_on_target`, `corners`, `fouls`, `yellow_cards`, `red_cards`. `round` es la jornada (1–38, o 1–34 en ligas de 18 clubes), asignada por orden cronológico dentro de cada liga y temporada; los partidos aplazados cuentan en la jornada en que se jugaron. | Lo lee `2.Ingest_matches_data`. |
 | `datasets/clubs.json` | JSON array | 144 clubes con `club_id`, `club_ref`, `name`, `country`, `city`, `founded_year`, `league_id`. | Lo lee `2.Ingest_clubs`. |
 
 Hay que copiar estos 3 archivos al contenedor ADLS `raw` antes de correr la ingesta.
@@ -81,9 +85,11 @@ Hay que copiar estos 3 archivos al contenedor ADLS `raw` antes de correr la inge
 | `proceso/2.Ingest_matches_data.ipynb` | Bronze | Lee `matches.csv` y escribe `football_dev.bronze.matches` particionado por `season_year`. |
 | `proceso/2.Ingest_clubs.ipynb` | Bronze | Lee `clubs.json` (multiline) y escribe `football_dev.bronze.clubs`. |
 | `proceso/3.Transform.ipynb` | Silver | Cruza las **3** tablas bronze. Filtra `season_year >= 2010`. Crea `result_type`, `goal_diff_category`, `match_intensity`, `is_classic`, `season_age`, `ht_result`, `is_comeback`, `second_half_goals` y totales de tiros, córners, faltas y tarjetas. Escribe `football_dev.silver.matches_transformed`. |
-| `proceso/4.Load.ipynb` | Gold | Escribe `football_dev.gold.season_stats` (KPIs por temporada, país y liga) y `football_dev.gold.standings` (tabla de posiciones por temporada y liga, con funciones de ventana). |
+| `proceso/4.Load.ipynb` | Gold | Escribe `football_dev.gold.season_stats` (KPIs por temporada, país y liga), `football_dev.gold.standings` (tabla de posiciones por temporada y liga, con funciones de ventana) y `football_dev.gold.calendar_stats` (goles y resultados por jornada y mes). |
+| `proceso/7.Elo_Ranking.ipynb` | Gold | Calcula el Elo de cada club partido a partido y escribe `football_dev.gold.club_elo`. |
+| `proceso/8.Prediccion_Resultados.ipynb` | Gold / ML | Entrena un modelo de local, empate o visitante con la forma reciente y el Elo, lo registra en MLflow (Unity Catalog) y escribe `football_dev.gold.match_predictions`. |
 | `proceso/5.Grants_Medallion.ipynb` | Seguridad | `GRANT` de catálogo, schema y `SELECT` sobre las tablas bronze, silver y gold. |
-| `proceso/6.DeltaSharing.ipynb` | Consumo | Crea el share `FOOTBALL_SHARE` con `gold.season_stats` y `gold.standings` y el recipient que consume Power BI. |
+| `proceso/6.DeltaSharing.ipynb` | Consumo | Crea el share `FOOTBALL_SHARE` con las 5 tablas gold (`season_stats`, `standings`, `calendar_stats`, `club_elo`, `match_predictions`) y el recipient que consume Power BI. Solo agrega las tablas que faltan, así que se puede volver a correr. |
 
 Widgets comunes de ingesta: `container`, `catalogo`, `esquema`, `storageName`.  
 Widgets de transform/load: `catalogo`, `esquema_source`, `esquema_sink`.
@@ -168,6 +174,31 @@ Tabla de posiciones por temporada y liga (682 filas: 18 o 20 clubes por liga):
 
 El desempate es simplificado: algunas ligas usan enfrentamiento directo, y Ligue 1 2019/20 se cerró por promedio de puntos (temporada suspendida por COVID).
 
+### Gold — `football_dev.gold.calendar_stats`
+
+Una fila por temporada, liga, jornada (`round`) y mes (`match_month`). Una jornada aparece en dos filas si sus partidos cruzan de un mes a otro. Trae `matches`, `total_goals`, `home_win_count`, `draw_count`, `away_win_count`, `comeback_count` y `total_cards`. `month_name` es el mes en español y `season_month_order` ordena de agosto (1) a julio (12).
+
+### Gold — `football_dev.gold.club_elo`
+
+Dos filas por partido (una por club) con el Elo antes y después: `elo_pre`, `opponent_elo_pre`, `elo_post` y `elo_change`, además de `goals_for`, `goals_against`, `result` (`W`/`D`/`L`) e `is_home`.
+
+Parámetros del Elo:
+- Todos empiezan en 1500; los que entran después (ascendidos) empiezan en 1450.
+- K = 20, ventaja de local de 60 puntos y un multiplicador por diferencia de goles.
+- Al empezar cada temporada, el rating se acerca un 25 % a 1500.
+- Cada liga se calcula por separado.
+
+### Gold — `football_dev.gold.match_predictions`
+
+Predicción por partido:
+- Probabilidades `prob_home`, `prob_draw`, `prob_away` y la clase `predicted_result`, comparada con `actual_result` (`is_correct`).
+- El modelo (regresión logística) usa la diferencia de Elo con ventaja local y la forma de los últimos 5 partidos de cada club en la temporada (puntos y diferencia de goles por partido).
+- Se entrena con todas las temporadas menos la última, que queda como prueba (`split` = `entrenamiento` / `prueba`).
+- Las métricas (accuracy, F1 macro, log loss y la línea base "siempre gana el local") quedan en el experimento MLflow `/Shared/smartdata_football/prediccion_resultados`.
+- El modelo se registra como `<catalogo>.gold.match_outcome_model`.
+
+En una prueba local con los datos del repo acertó el 52,8 % de la temporada 2024/25, frente al 42 % de apostar siempre por el local. Como casi todos los modelos de este tipo, rara vez predice empate.
+
 ## Cómo ejecutarlo
 
 1. Sube `datasets/leagues.csv`, `matches.csv` y `clubs.json` al contenedor `raw` de ADLS.
@@ -183,6 +214,10 @@ SELECT season_year, league_name, club, points, last5_form
 FROM football_dev.gold.standings
 WHERE zone = 'Campeon'
 ORDER BY season_year DESC, league_name;
+
+SELECT split, AVG(is_correct) AS accuracy
+FROM football_dev.gold.match_predictions
+GROUP BY split;
 ```
 
 ## Equivalencia con el proyecto F1
