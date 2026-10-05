@@ -18,7 +18,7 @@ jobs:
         ORIGIN_HOST=${{ secrets.DATABRICKS_ORIGIN_HOST }}
         ORIGIN_TOKEN=${{ secrets.DATABRICKS_ORIGIN_TOKEN }}
         NOTEBOOK_BASE="/Workspace/Users/cvalenciam@uni.pe/smartdata_football/proceso"
-        NOTEBOOKS=("1.Preparacion_Ambiente" "2.Ingest_clubs" "2.Ingest_leagues_data" "2.Ingest_matches_data" "3.Transform" "4.Load" "5.Grants_Medallion")  # Agrega más según necesitesas
+        NOTEBOOKS=("1.Preparacion_Ambiente" "2.Ingest_clubs" "2.Ingest_leagues_data" "2.Ingest_matches_data" "3.Transform" "4.Load" "7.Elo_Ranking" "8.Prediccion_Resultados" "5.Grants_Medallion")  # Agrega más según necesitesas
         mkdir -p notebooks_to_deploy
         for nb in "${NOTEBOOKS[@]}"; do
           echo "Exportando $nb en modo raw..."
@@ -256,6 +256,47 @@ jobs:
               ]
             },
             {
+              "task_key": "elo",
+              "description": "Ejecuta notebook Elo_Ranking con parámetros",
+              "notebook_task": {
+                "notebook_path": "/proyecto/notebooks/7.Elo_Ranking",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "catalogo": "football_prod",
+                  "esquema_source": "silver",
+                  "esquema_sink": "gold"
+                }
+              },
+              "existing_cluster_id": "$CLUSTER_ID",
+              "timeout_seconds": 3600,
+              "max_retries": 2,
+              "depends_on": [
+                {
+                  "task_key": "transform"
+                }
+              ]
+            },
+            {
+              "task_key": "prediccion",
+              "description": "Ejecuta notebook Prediccion_Resultados con parámetros",
+              "notebook_task": {
+                "notebook_path": "/proyecto/notebooks/8.Prediccion_Resultados",
+                "source": "WORKSPACE",
+                "base_parameters": {
+                  "catalogo": "football_prod",
+                  "esquema": "gold"
+                }
+              },
+              "existing_cluster_id": "$CLUSTER_ID",
+              "timeout_seconds": 3600,
+              "max_retries": 2,
+              "depends_on": [
+                {
+                  "task_key": "elo"
+                }
+              ]
+            },
+            {
               "task_key": "grants",
               "description": "Ejecuta notebook Grants con parámetros",
               "notebook_task": {
@@ -271,6 +312,9 @@ jobs:
               "depends_on": [
                 {
                   "task_key": "Load"
+                },
+                {
+                  "task_key": "prediccion"
                 }
               ]
             }
