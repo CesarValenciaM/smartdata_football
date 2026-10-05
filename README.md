@@ -116,8 +116,9 @@ Widgets de transform/load: `catalogo`, `esquema_source`, `esquema_sink`.
 
 | Archivo | Qué es |
 |---|---|
-| `dashboard/Fútbol Big Five - Resumen por Temporada.lvdash.json` | Dashboard de Databricks (AI/BI) sobre `gold.season_stats`. |
+| `dashboard/dashboard.json` | Dashboard de Databricks (AI/BI) sobre `gold.season_stats`. |
 | `dashboard/dashboard.pbix` | Dashboard de Power BI conectado por Delta Sharing (`football_share.gold.season_stats`). |
+| `dashboard/dashboard.pbit` | Plantilla de Power BI (modelo, medidas y páginas, sin datos). |
 
 ### `.github/workflows/` — CI/CD
 
