@@ -185,19 +185,20 @@ Dos filas por partido (una por club) con el Elo antes y después: `elo_pre`, `op
 Parámetros del Elo:
 - Todos empiezan en 1500; los que entran después (ascendidos) empiezan en 1450.
 - K = 20, ventaja de local de 60 puntos y un multiplicador por diferencia de goles.
-- Al empezar cada temporada, el rating se acerca un 25 % a 1500.
+- Al empezar cada temporada, el rating se acerca un 10 % a 1500. Ese valor dio el mejor log loss en la validación; los grandes siguen siendo grandes de un año a otro.
 - Cada liga se calcula por separado.
 
 ### Gold — `football_dev.gold.match_predictions`
 
 Predicción por partido:
 - Probabilidades `prob_home`, `prob_draw`, `prob_away` y la clase `predicted_result`, comparada con `actual_result` (`is_correct`).
-- El modelo (regresión logística) usa la diferencia de Elo con ventaja local y la forma de los últimos 5 partidos de cada club en la temporada (puntos y diferencia de goles por partido).
-- Se entrena con todas las temporadas menos la última, que queda como prueba (`split` = `entrenamiento` / `prueba`).
-- Las métricas (accuracy, F1 macro, log loss y la línea base "siempre gana el local") quedan en el experimento MLflow `/Shared/smartdata_football/prediccion_resultados`.
+- El modelo (regresión logística) usa la diferencia de Elo y la forma de los últimos 5 partidos de cada club en la temporada: puntos, diferencia de goles y diferencia de tiros a puerta por partido. Los tiros salen de `silver.matches_transformed`.
+- Validación: para cada una de las 4 temporadas anteriores a la última, se entrena con las previas y se evalúa en esa temporada (`log_loss_validacion` y `accuracy_validacion` por temporada, más sus medias).
+- El modelo final se entrena con todas las temporadas menos la última, que queda como prueba (`split` = `entrenamiento` / `prueba`).
+- Las métricas (validación, accuracy, F1 macro, log loss y la línea base "siempre gana el local") quedan en el experimento MLflow `/Shared/smartdata_football/prediccion_resultados`.
 - El modelo se registra como `<catalogo>.gold.match_outcome_model`.
 
-En una prueba local con los datos del repo acertó el 52,8 % de la temporada 2024/25, frente al 42 % de apostar siempre por el local. Como casi todos los modelos de este tipo, rara vez predice empate.
+En una prueba local con los datos del repo acertó el 53,4 % de la temporada 2024/25 (log loss 0,985), frente al 42 % de apostar siempre por el local. Como casi todos los modelos de este tipo, rara vez predice empate.
 
 ## Cómo ejecutarlo
 
