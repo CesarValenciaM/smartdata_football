@@ -21,6 +21,13 @@ _build*.py
 _rename.py
 *.log
 
+# Power BI: solo se versiona el .pbix (el proyecto PBIP queda local)
+*.pbip
+*.SemanticModel/
+*.Report/
+**/.pbi/
+dashboard/README.md
+
 # Secrets
 *.pem
 credentials.json
