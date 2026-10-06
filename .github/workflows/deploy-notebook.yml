@@ -133,7 +133,7 @@ jobs:
                 "notebook_path": "/proyecto/notebooks/1.Preparacion_Ambiente",
                 "source": "WORKSPACE",
                 "base_parameters": {
-                  "storageName": "s3smartdata-bucket",
+                  "storageName": "s3-football-bucket",
                   "catalogo": "football_prod"
                 }
               },
@@ -151,7 +151,7 @@ jobs:
                   "container": "raw",
                   "catalogo": "football_prod",
                   "esquema": "bronze",
-                  "storageName": "s3smartdata-bucket"
+                  "storageName": "s3-football-bucket"
                 }
               },
               "existing_cluster_id": "$CLUSTER_ID",
@@ -173,7 +173,7 @@ jobs:
                   "container": "raw",
                   "catalogo": "football_prod",
                   "esquema": "bronze",
-                  "storageName": "s3smartdata-bucket"
+                  "storageName": "s3-football-bucket"
                 }
               },
               "existing_cluster_id": "$CLUSTER_ID",
@@ -195,7 +195,7 @@ jobs:
                   "container": "raw",
                   "catalogo": "football_prod",
                   "esquema": "bronze",
-                  "storageName": "s3smartdata-bucket"
+                  "storageName": "s3-football-bucket"
                 }
               },
               "existing_cluster_id": "$CLUSTER_ID",
