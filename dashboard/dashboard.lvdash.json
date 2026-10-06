@@ -582,7 +582,7 @@
         "measures": [
           {
             "name": "accuracy",
-            "expr": "AVG(is_correct)",
+            "expr": "COUNT_IF(predicted_result = actual_result) * 1.0 / COUNT(1)",
             "displayName": "Acierto del Modelo",
             "format": {
               "type": "percentage",
@@ -594,7 +594,7 @@
           },
           {
             "name": "always_home_accuracy",
-            "expr": "COUNT_IF(actual_result = 'Local') * 1.0 / COUNT(match_id)",
+            "expr": "COUNT_IF(actual_result = 'Local') * 1.0 / COUNT(1)",
             "displayName": "Acierto Siempre Local",
             "format": {
               "type": "percentage",
@@ -606,7 +606,7 @@
           },
           {
             "name": "improvement",
-            "expr": "AVG(is_correct) - COUNT_IF(actual_result = 'Local') * 1.0 / COUNT(match_id)",
+            "expr": "COUNT_IF(predicted_result = actual_result) * 1.0 / COUNT(1) - COUNT_IF(actual_result = 'Local') * 1.0 / COUNT(1)",
             "displayName": "Mejora vs Local",
             "format": {
               "type": "percentage",
@@ -618,7 +618,7 @@
           },
           {
             "name": "total_evaluated",
-            "expr": "COUNT(match_id)",
+            "expr": "COUNT(1)",
             "displayName": "Partidos Evaluados",
             "format": {
               "type": "number",
@@ -666,7 +666,7 @@
           },
           {
             "name": "accuracy_sort",
-            "expr": "-AVG(is_correct)",
+            "expr": "-COUNT_IF(predicted_result = actual_result) * 1.0 / COUNT(1)",
             "displayName": "Orden Acierto",
             "format": {
               "type": "number",
@@ -683,7 +683,7 @@
   "pages": [
     {
       "name": "football-kpis",
-      "displayName": "KPIs Futbol Big Five",
+      "displayName": "Resumen",
       "layout": [
         {
           "widget": {
@@ -1514,9 +1514,26 @@
             "name": "filter_liga_pos",
             "queries": [
               {
-                "name": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c100acf21aa38edadc6a9f035240_league_name",
+                "name": "dashboards/01f1c13ee7db1034bbeaf15734c7917f/datasets/01f1c13ee7de187f9e4cb35e1409442c_league_name",
                 "query": {
                   "datasetName": "standings",
+                  "fields": [
+                    {
+                      "name": "league_name",
+                      "expression": "`league_name`"
+                    },
+                    {
+                      "name": "league_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f1c13ee7db1034bbeaf15734c7917f/datasets/01f1c13ee7de187eac9598e96e0a4cdc_league_name",
+                "query": {
+                  "datasetName": "club_elo",
                   "fields": [
                     {
                       "name": "league_name",
@@ -1535,14 +1552,21 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Liga"
+                "title": {
+                  "value": "Liga",
+                  "fields": []
+                }
               },
               "widgetType": "filter-single-select",
               "encodings": {
                 "fields": [
                   {
                     "fieldName": "league_name",
-                    "queryName": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c100acf21aa38edadc6a9f035240_league_name"
+                    "queryName": "dashboards/01f1c13ee7db1034bbeaf15734c7917f/datasets/01f1c13ee7de187f9e4cb35e1409442c_league_name"
+                  },
+                  {
+                    "fieldName": "league_name",
+                    "queryName": "dashboards/01f1c13ee7db1034bbeaf15734c7917f/datasets/01f1c13ee7de187eac9598e96e0a4cdc_league_name"
                   }
                 ]
               }
@@ -1560,9 +1584,26 @@
             "name": "filter_temporada_pos",
             "queries": [
               {
-                "name": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c100acf21aa38edadc6a9f035240_season_year",
+                "name": "dashboards/01f1c13ee7db1034bbeaf15734c7917f/datasets/01f1c13ee7de187f9e4cb35e1409442c_season_year",
                 "query": {
                   "datasetName": "standings",
+                  "fields": [
+                    {
+                      "name": "season_year",
+                      "expression": "`season_year`"
+                    },
+                    {
+                      "name": "season_year_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f1c13ee7db1034bbeaf15734c7917f/datasets/01f1c13ee7de187eac9598e96e0a4cdc_season_year",
+                "query": {
+                  "datasetName": "club_elo",
                   "fields": [
                     {
                       "name": "season_year",
@@ -1581,14 +1622,21 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Temporada"
+                "title": {
+                  "value": "Temporada",
+                  "fields": []
+                }
               },
               "widgetType": "filter-single-select",
               "encodings": {
                 "fields": [
                   {
                     "fieldName": "season_year",
-                    "queryName": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c100acf21aa38edadc6a9f035240_season_year"
+                    "queryName": "dashboards/01f1c13ee7db1034bbeaf15734c7917f/datasets/01f1c13ee7de187f9e4cb35e1409442c_season_year"
+                  },
+                  {
+                    "fieldName": "season_year",
+                    "queryName": "dashboards/01f1c13ee7db1034bbeaf15734c7917f/datasets/01f1c13ee7de187eac9598e96e0a4cdc_season_year"
                   }
                 ]
               }
@@ -2077,6 +2125,14 @@
                   "datasetName": "match_predictions",
                   "fields": [
                     {
+                      "name": "league_name",
+                      "expression": "`league_name`"
+                    },
+                    {
+                      "name": "season_year",
+                      "expression": "`season_year`"
+                    },
+                    {
                       "name": "match_date",
                       "expression": "`match_date`"
                     },
@@ -2111,27 +2167,34 @@
                     {
                       "name": "actual_result",
                       "expression": "`actual_result`"
+                    },
+                    {
+                      "name": "split",
+                      "expression": "`split`"
                     }
                   ],
-                  "disaggregated": false,
-                  "orders": [
-                    {
-                      "direction": "DESC",
-                      "expression": "`match_date`"
-                    }
-                  ]
+                  "disaggregated": false
                 }
               }
             ],
             "spec": {
               "frame": {
                 "showTitle": true,
-                "title": "Detalle de Predicciones"
+                "title": {
+                  "value": "Detalle de Predicciones",
+                  "fields": []
+                }
               },
               "version": 2,
               "widgetType": "table",
               "encodings": {
                 "columns": [
+                  {
+                    "fieldName": "league_name"
+                  },
+                  {
+                    "fieldName": "season_year"
+                  },
                   {
                     "fieldName": "match_date"
                   },
@@ -2158,6 +2221,9 @@
                   },
                   {
                     "fieldName": "actual_result"
+                  },
+                  {
+                    "fieldName": "split"
                   }
                 ]
               },
