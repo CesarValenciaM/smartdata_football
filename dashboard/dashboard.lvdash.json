@@ -49,16 +49,6 @@
             }
           },
           {
-            "name": "max_goals",
-            "expr": "MAX(max_goals)",
-            "displayName": "Máx Goles en Partido"
-          },
-          {
-            "name": "min_goals",
-            "expr": "MIN(min_goals)",
-            "displayName": "Mín Goles en Partido"
-          },
-          {
             "name": "classic_count",
             "expr": "SUM(classic_count)",
             "displayName": "Clásicos",
@@ -83,9 +73,33 @@
             }
           },
           {
+            "name": "away_wins",
+            "expr": "SUM(away_win_count)",
+            "displayName": "Victorias Visitante",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
+            "name": "draws",
+            "expr": "SUM(draw_count)",
+            "displayName": "Empates",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
             "name": "avg_goals_per_match",
             "expr": "SUM(total_goals) * 1.0 / SUM(conteo)",
-            "displayName": "Promedio Goles/Partido",
+            "displayName": "Goles por Partido",
             "format": {
               "type": "number",
               "decimalPlaces": {
@@ -105,6 +119,562 @@
                 "places": 1.0
               }
             }
+          },
+          {
+            "name": "shot_accuracy",
+            "expr": "SUM(total_shots_on_target) * 1.0 / SUM(total_shots)",
+            "displayName": "Precisión de Tiro",
+            "format": {
+              "type": "percentage",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          },
+          {
+            "name": "home_wins_sort",
+            "expr": "-SUM(home_win_count)",
+            "displayName": "Orden Victorias Locales",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "calendar_stats",
+      "displayName": "calendar_stats",
+      "config": {
+        "version": "1.1",
+        "source": "football_prod.gold.calendar_stats",
+        "dimensions": [
+          {
+            "name": "season_year",
+            "expr": "season_year",
+            "displayName": "Temporada"
+          },
+          {
+            "name": "country",
+            "expr": "country",
+            "displayName": "País"
+          },
+          {
+            "name": "league_name",
+            "expr": "league_name",
+            "displayName": "Liga"
+          },
+          {
+            "name": "month_name",
+            "expr": "month_name",
+            "displayName": "Mes"
+          },
+          {
+            "name": "season_month_order",
+            "expr": "season_month_order",
+            "displayName": "Orden Mes Temporada"
+          },
+          {
+            "name": "match_month",
+            "expr": "match_month",
+            "displayName": "Número Mes"
+          }
+        ],
+        "measures": [
+          {
+            "name": "matches",
+            "expr": "SUM(matches)",
+            "displayName": "Partidos",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
+            "name": "total_goals",
+            "expr": "SUM(total_goals)",
+            "displayName": "Total Goles",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
+            "name": "goals_per_match",
+            "expr": "SUM(total_goals) * 1.0 / SUM(matches)",
+            "displayName": "Goles por Partido",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 2.0
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "club_elo",
+      "displayName": "club_elo",
+      "config": {
+        "version": "1.1",
+        "source": "football_prod.gold.club_elo",
+        "dimensions": [
+          {
+            "name": "match_date",
+            "expr": "match_date",
+            "displayName": "Fecha"
+          },
+          {
+            "name": "season_year",
+            "expr": "season_year",
+            "displayName": "Temporada"
+          },
+          {
+            "name": "round",
+            "expr": "round",
+            "displayName": "Jornada"
+          },
+          {
+            "name": "country",
+            "expr": "country",
+            "displayName": "País"
+          },
+          {
+            "name": "league_name",
+            "expr": "league_name",
+            "displayName": "Liga"
+          },
+          {
+            "name": "club",
+            "expr": "club",
+            "displayName": "Club"
+          },
+          {
+            "name": "opponent",
+            "expr": "opponent",
+            "displayName": "Rival"
+          },
+          {
+            "name": "is_home",
+            "expr": "CASE WHEN is_home THEN 'Local' ELSE 'Visitante' END",
+            "displayName": "Condición"
+          },
+          {
+            "name": "result",
+            "expr": "CASE result WHEN 'W' THEN 'Victoria' WHEN 'D' THEN 'Empate' ELSE 'Derrota' END",
+            "displayName": "Resultado"
+          }
+        ],
+        "measures": [
+          {
+            "name": "elo",
+            "expr": "MAX_BY(elo_post, match_date)",
+            "displayName": "Elo final",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
+            "name": "elo_change",
+            "expr": "MAX_BY(elo_post, match_date) - MAX_BY(elo_pre, season_year * 100000 - DATEDIFF(match_date, DATE'1900-01-01'))",
+            "displayName": "Cambio de Elo en la temporada",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          },
+          {
+            "name": "goals_for",
+            "expr": "SUM(goals_for)",
+            "displayName": "Goles a Favor",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
+            "name": "goals_against",
+            "expr": "SUM(goals_against)",
+            "displayName": "Goles en Contra",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
+            "name": "matches_count",
+            "expr": "COUNT(match_id)",
+            "displayName": "Partidos",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
+            "name": "win_pct",
+            "expr": "COUNT_IF(result = 'W') * 1.0 / COUNT(match_id)",
+            "displayName": "% Victorias del club",
+            "format": {
+              "type": "percentage",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          },
+          {
+            "name": "elo_change_match",
+            "expr": "SUM(elo_change)",
+            "displayName": "Cambio Elo",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "standings",
+      "displayName": "standings",
+      "config": {
+        "version": "1.1",
+        "source": "football_prod.gold.standings",
+        "dimensions": [
+          {
+            "name": "season_year",
+            "expr": "season_year",
+            "displayName": "Temporada"
+          },
+          {
+            "name": "country",
+            "expr": "country",
+            "displayName": "País"
+          },
+          {
+            "name": "league_name",
+            "expr": "league_name",
+            "displayName": "Liga"
+          },
+          {
+            "name": "club",
+            "expr": "club",
+            "displayName": "Club"
+          },
+          {
+            "name": "position",
+            "expr": "position",
+            "displayName": "Pos"
+          },
+          {
+            "name": "zone",
+            "expr": "zone",
+            "displayName": "Zona"
+          },
+          {
+            "name": "last5_form",
+            "expr": "last5_form",
+            "displayName": "Forma"
+          }
+        ],
+        "measures": [
+          {
+            "name": "played",
+            "expr": "SUM(played)",
+            "displayName": "PJ",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
+            "name": "wins",
+            "expr": "SUM(wins)",
+            "displayName": "G",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
+            "name": "draws_standing",
+            "expr": "SUM(draws)",
+            "displayName": "E",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
+            "name": "losses",
+            "expr": "SUM(losses)",
+            "displayName": "P",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
+            "name": "goals_for",
+            "expr": "SUM(goals_for)",
+            "displayName": "GF",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
+            "name": "goals_against",
+            "expr": "SUM(goals_against)",
+            "displayName": "GC",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
+            "name": "goal_diff",
+            "expr": "SUM(goal_diff)",
+            "displayName": "DG",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
+            "name": "points",
+            "expr": "SUM(points)",
+            "displayName": "Pts",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
+            "name": "titulos",
+            "expr": "COUNT_IF(zone = 'Campeon')",
+            "displayName": "Títulos",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "match_predictions",
+      "displayName": "match_predictions",
+      "config": {
+        "version": "1.1",
+        "source": "football_prod.gold.match_predictions",
+        "dimensions": [
+          {
+            "name": "match_date",
+            "expr": "match_date",
+            "displayName": "Fecha"
+          },
+          {
+            "name": "season_year",
+            "expr": "season_year",
+            "displayName": "Temporada"
+          },
+          {
+            "name": "round",
+            "expr": "round",
+            "displayName": "Jornada"
+          },
+          {
+            "name": "country",
+            "expr": "country",
+            "displayName": "País"
+          },
+          {
+            "name": "league_name",
+            "expr": "league_name",
+            "displayName": "Liga"
+          },
+          {
+            "name": "home_club",
+            "expr": "home_club",
+            "displayName": "Equipo Local"
+          },
+          {
+            "name": "away_club",
+            "expr": "away_club",
+            "displayName": "Equipo Visitante"
+          },
+          {
+            "name": "predicted_result",
+            "expr": "predicted_result",
+            "displayName": "Predicción"
+          },
+          {
+            "name": "actual_result",
+            "expr": "actual_result",
+            "displayName": "Resultado Real"
+          },
+          {
+            "name": "split",
+            "expr": "split",
+            "displayName": "Conjunto"
+          }
+        ],
+        "measures": [
+          {
+            "name": "accuracy",
+            "expr": "AVG(is_correct)",
+            "displayName": "Acierto del Modelo",
+            "format": {
+              "type": "percentage",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          },
+          {
+            "name": "always_home_accuracy",
+            "expr": "COUNT_IF(actual_result = 'Local') * 1.0 / COUNT(match_id)",
+            "displayName": "Acierto Siempre Local",
+            "format": {
+              "type": "percentage",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          },
+          {
+            "name": "improvement",
+            "expr": "AVG(is_correct) - COUNT_IF(actual_result = 'Local') * 1.0 / COUNT(match_id)",
+            "displayName": "Mejora vs Local",
+            "format": {
+              "type": "percentage",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          },
+          {
+            "name": "total_evaluated",
+            "expr": "COUNT(match_id)",
+            "displayName": "Partidos Evaluados",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
+            "name": "prob_home_avg",
+            "expr": "AVG(prob_home)",
+            "displayName": "Prob. Local",
+            "format": {
+              "type": "percentage",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          },
+          {
+            "name": "prob_draw_avg",
+            "expr": "AVG(prob_draw)",
+            "displayName": "Prob. Empate",
+            "format": {
+              "type": "percentage",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          },
+          {
+            "name": "prob_away_avg",
+            "expr": "AVG(prob_away)",
+            "displayName": "Prob. Visitante",
+            "format": {
+              "type": "percentage",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          },
+          {
+            "name": "accuracy_sort",
+            "expr": "-AVG(is_correct)",
+            "displayName": "Orden Acierto",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 3.0
+              }
+            }
           }
         ]
       }
@@ -117,11 +687,11 @@
       "layout": [
         {
           "widget": {
-            "name": "title",
+            "name": "header_resumen",
             "multilineTextboxSpec": {
               "lines": [
-                "# ⚽ Fútbol Big Five - Resumen por Temporada\n",
-                "Estadísticas de las principales ligas europeas: Premier League, La Liga, Serie A, Bundesliga y Ligue 1."
+                "# ⚽ SmartData Football | Resumen\n",
+                "Big Five europeas · Delta Sharing"
               ]
             }
           },
@@ -134,7 +704,99 @@
         },
         {
           "widget": {
-            "name": "kpi_matches",
+            "name": "filter_liga",
+            "queries": [
+              {
+                "name": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c0fd904113cb81092e75707fc6ab_league_name",
+                "query": {
+                  "datasetName": "838a295a",
+                  "fields": [
+                    {
+                      "name": "league_name",
+                      "expression": "`league_name`"
+                    },
+                    {
+                      "name": "league_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Liga"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "league_name",
+                    "queryName": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c0fd904113cb81092e75707fc6ab_league_name"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_temporada",
+            "queries": [
+              {
+                "name": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c0fd904113cb81092e75707fc6ab_season_year",
+                "query": {
+                  "datasetName": "838a295a",
+                  "fields": [
+                    {
+                      "name": "season_year",
+                      "expression": "`season_year`"
+                    },
+                    {
+                      "name": "season_year_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Temporada"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "season_year",
+                    "queryName": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c0fd904113cb81092e75707fc6ab_season_year"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 2,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_partidos",
             "queries": [
               {
                 "name": "main_query",
@@ -153,7 +815,7 @@
             "spec": {
               "frame": {
                 "showTitle": true,
-                "title": "Total Partidos"
+                "title": "Partidos"
               },
               "version": 2,
               "widgetType": "counter",
@@ -170,57 +832,14 @@
           },
           "position": {
             "x": 0,
-            "y": 2,
+            "y": 4,
             "width": 3,
             "height": 3
           }
         },
         {
           "widget": {
-            "name": "kpi_goals",
-            "queries": [
-              {
-                "name": "main_query",
-                "query": {
-                  "datasetName": "838a295a",
-                  "fields": [
-                    {
-                      "name": "measure(total_goals)",
-                      "expression": "MEASURE(`total_goals`)"
-                    }
-                  ],
-                  "disaggregated": false
-                }
-              }
-            ],
-            "spec": {
-              "frame": {
-                "showTitle": true,
-                "title": "Total Goles"
-              },
-              "version": 2,
-              "widgetType": "counter",
-              "encodings": {
-                "value": {
-                  "fieldName": "measure(total_goals)",
-                  "rowNumber": 0
-                }
-              },
-              "data": {
-                "queryName": "main_query"
-              }
-            }
-          },
-          "position": {
-            "x": 3,
-            "y": 2,
-            "width": 3,
-            "height": 3
-          }
-        },
-        {
-          "widget": {
-            "name": "kpi_avg_goals",
+            "name": "kpi_goles_partido",
             "queries": [
               {
                 "name": "main_query",
@@ -239,7 +858,7 @@
             "spec": {
               "frame": {
                 "showTitle": true,
-                "title": "Promedio Goles/Partido"
+                "title": "Goles por Partido"
               },
               "version": 2,
               "widgetType": "counter",
@@ -255,15 +874,15 @@
             }
           },
           "position": {
-            "x": 6,
-            "y": 2,
+            "x": 3,
+            "y": 4,
             "width": 3,
             "height": 3
           }
         },
         {
           "widget": {
-            "name": "kpi_home_pct",
+            "name": "kpi_victorias_local",
             "queries": [
               {
                 "name": "main_query",
@@ -282,7 +901,7 @@
             "spec": {
               "frame": {
                 "showTitle": true,
-                "title": "% Victoria Local"
+                "title": "% Victorias Locales"
               },
               "version": 2,
               "widgetType": "counter",
@@ -298,15 +917,58 @@
             }
           },
           "position": {
-            "x": 9,
-            "y": 2,
+            "x": 6,
+            "y": 4,
             "width": 3,
             "height": 3
           }
         },
         {
           "widget": {
-            "name": "goals_by_season",
+            "name": "kpi_precision_tiro",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "838a295a",
+                  "fields": [
+                    {
+                      "name": "measure(shot_accuracy)",
+                      "expression": "MEASURE(`shot_accuracy`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Precisión de Tiro"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(shot_accuracy)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 4,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "goles_por_temporada",
             "queries": [
               {
                 "name": "main_query",
@@ -322,18 +984,24 @@
                       "expression": "`season_year`"
                     },
                     {
-                      "name": "measure(total_goals)",
-                      "expression": "MEASURE(`total_goals`)"
+                      "name": "measure(avg_goals_per_match)",
+                      "expression": "MEASURE(`avg_goals_per_match`)"
                     }
                   ],
-                  "disaggregated": false
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "`season_year`"
+                    }
+                  ]
                 }
               }
             ],
             "spec": {
               "frame": {
                 "showTitle": true,
-                "title": "Goles por Temporada"
+                "title": "Goles por partido por temporada"
               },
               "version": 3,
               "widgetType": "line",
@@ -341,134 +1009,6 @@
                 "x": {
                   "fieldName": "season_year",
                   "displayName": "season_year",
-                  "scale": {
-                    "type": "categorical"
-                  }
-                },
-                "y": {
-                  "fieldName": "measure(total_goals)",
-                  "displayName": "total_goals",
-                  "scale": {
-                    "type": "quantitative"
-                  }
-                },
-                "color": {
-                  "fieldName": "league_name",
-                  "displayName": "league_name",
-                  "scale": {
-                    "type": "categorical"
-                  }
-                }
-              },
-              "data": {
-                "queryName": "main_query"
-              }
-            }
-          },
-          "position": {
-            "x": 0,
-            "y": 5,
-            "width": 6,
-            "height": 6
-          }
-        },
-        {
-          "widget": {
-            "name": "matches_by_league",
-            "queries": [
-              {
-                "name": "main_query",
-                "query": {
-                  "datasetName": "838a295a",
-                  "fields": [
-                    {
-                      "name": "league_name",
-                      "expression": "`league_name`"
-                    },
-                    {
-                      "name": "measure(total_matches)",
-                      "expression": "MEASURE(`total_matches`)"
-                    }
-                  ],
-                  "disaggregated": false
-                }
-              }
-            ],
-            "spec": {
-              "frame": {
-                "showTitle": true,
-                "title": "Partidos por Liga"
-              },
-              "version": 3,
-              "widgetType": "bar",
-              "encodings": {
-                "x": {
-                  "fieldName": "league_name",
-                  "displayName": "league_name",
-                  "scale": {
-                    "type": "categorical"
-                  }
-                },
-                "y": {
-                  "fieldName": "measure(total_matches)",
-                  "displayName": "total_matches",
-                  "scale": {
-                    "type": "quantitative"
-                  }
-                },
-                "color": {
-                  "fieldName": "league_name",
-                  "displayName": "league_name",
-                  "scale": {
-                    "type": "categorical"
-                  }
-                }
-              },
-              "data": {
-                "queryName": "main_query"
-              }
-            }
-          },
-          "position": {
-            "x": 6,
-            "y": 5,
-            "width": 6,
-            "height": 6
-          }
-        },
-        {
-          "widget": {
-            "name": "avg_goals_by_league",
-            "queries": [
-              {
-                "name": "main_query",
-                "query": {
-                  "datasetName": "838a295a",
-                  "fields": [
-                    {
-                      "name": "league_name",
-                      "expression": "`league_name`"
-                    },
-                    {
-                      "name": "measure(avg_goals_per_match)",
-                      "expression": "MEASURE(`avg_goals_per_match`)"
-                    }
-                  ],
-                  "disaggregated": false
-                }
-              }
-            ],
-            "spec": {
-              "frame": {
-                "showTitle": true,
-                "title": "Promedio Goles/Partido por Liga"
-              },
-              "version": 3,
-              "widgetType": "bar",
-              "encodings": {
-                "x": {
-                  "fieldName": "league_name",
-                  "displayName": "league_name",
                   "scale": {
                     "type": "categorical"
                   }
@@ -495,14 +1035,14 @@
           },
           "position": {
             "x": 0,
-            "y": 11,
-            "width": 6,
+            "y": 7,
+            "width": 12,
             "height": 6
           }
         },
         {
           "widget": {
-            "name": "home_wins_by_season",
+            "name": "resultado_por_liga",
             "queries": [
               {
                 "name": "main_query",
@@ -510,49 +1050,76 @@
                   "datasetName": "838a295a",
                   "fields": [
                     {
+                      "name": "measure(home_wins)",
+                      "expression": "MEASURE(`home_wins`)"
+                    },
+                    {
+                      "name": "measure(draws)",
+                      "expression": "MEASURE(`draws`)"
+                    },
+                    {
+                      "name": "measure(away_wins)",
+                      "expression": "MEASURE(`away_wins`)"
+                    },
+                    {
                       "name": "league_name",
                       "expression": "`league_name`"
                     },
                     {
-                      "name": "season_year",
-                      "expression": "`season_year`"
-                    },
-                    {
-                      "name": "measure(home_win_pct)",
-                      "expression": "MEASURE(`home_win_pct`)"
+                      "name": "measure(home_wins_sort)",
+                      "expression": "MEASURE(`home_wins_sort`)"
                     }
                   ],
-                  "disaggregated": false
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "MEASURE(`home_wins_sort`)"
+                    }
+                  ]
                 }
               }
             ],
             "spec": {
               "frame": {
                 "showTitle": true,
-                "title": "Victorias Locales por Temporada"
+                "title": "Local, empate o visitante"
               },
               "version": 3,
-              "widgetType": "line",
+              "mark": {
+                "layout": "stack"
+              },
+              "widgetType": "bar",
               "encodings": {
                 "x": {
-                  "fieldName": "season_year",
-                  "displayName": "season_year",
-                  "scale": {
-                    "type": "categorical"
-                  }
-                },
-                "y": {
-                  "fieldName": "measure(home_win_pct)",
-                  "displayName": "home_win_pct",
+                  "fields": [
+                    {
+                      "fieldName": "measure(home_wins)",
+                      "displayName": "Victorias Locales"
+                    },
+                    {
+                      "fieldName": "measure(draws)",
+                      "displayName": "Empates"
+                    },
+                    {
+                      "fieldName": "measure(away_wins)",
+                      "displayName": "Victorias Visitante"
+                    }
+                  ],
                   "scale": {
                     "type": "quantitative"
                   }
                 },
-                "color": {
+                "y": {
                   "fieldName": "league_name",
-                  "displayName": "league_name",
                   "scale": {
-                    "type": "categorical"
+                    "type": "categorical",
+                    "sort": {
+                      "by": "measure",
+                      "measure": {
+                        "fieldName": "measure(home_wins_sort)"
+                      }
+                    }
                   }
                 }
               },
@@ -563,56 +1130,38 @@
           },
           "position": {
             "x": 6,
-            "y": 11,
+            "y": 13,
             "width": 6,
             "height": 6
           }
         },
         {
           "widget": {
-            "name": "pivot_table",
+            "name": "goles_por_mes",
             "queries": [
               {
                 "name": "main_query",
                 "query": {
-                  "datasetName": "838a295a",
+                  "datasetName": "calendar_stats",
                   "fields": [
                     {
-                      "name": "league_name",
-                      "expression": "`league_name`"
+                      "name": "month_name",
+                      "expression": "`month_name`"
                     },
                     {
-                      "name": "season_year",
-                      "expression": "`season_year`"
+                      "name": "measure(goals_per_match)",
+                      "expression": "MEASURE(`goals_per_match`)"
                     },
                     {
-                      "name": "measure(total_goals)",
-                      "expression": "MEASURE(`total_goals`)"
+                      "name": "min(season_month_order)",
+                      "expression": "MIN(`season_month_order`)"
                     }
                   ],
-                  "cubeGroupingSets": {
-                    "sets": [
-                      {
-                        "fieldNames": [
-                          "league_name"
-                        ]
-                      },
-                      {
-                        "fieldNames": [
-                          "season_year"
-                        ]
-                      }
-                    ]
-                  },
                   "disaggregated": false,
                   "orders": [
                     {
                       "direction": "ASC",
-                      "expression": "`league_name`"
-                    },
-                    {
-                      "direction": "ASC",
-                      "expression": "`season_year`"
+                      "expression": "MIN(`season_month_order`)"
                     }
                   ]
                 }
@@ -621,25 +1170,31 @@
             "spec": {
               "frame": {
                 "showTitle": true,
-                "title": "Goles por Liga y Temporada"
+                "title": {
+                  "value": "Goles por partido según el mes",
+                  "fields": []
+                }
               },
               "version": 3,
-              "widgetType": "pivot",
+              "widgetType": "bar",
               "encodings": {
-                "rows": [
-                  {
-                    "fieldName": "league_name"
+                "x": {
+                  "fieldName": "month_name",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "measure",
+                      "measure": {
+                        "fieldName": "min(season_month_order)"
+                      }
+                    }
                   }
-                ],
-                "columns": [
-                  {
-                    "fieldName": "season_year"
+                },
+                "y": {
+                  "fieldName": "measure(goals_per_match)",
+                  "scale": {
+                    "type": "quantitative"
                   }
-                ],
-                "cell": {
-                  "type": "single-cell",
-                  "fieldName": "measure(total_goals)",
-                  "cellType": "text"
                 }
               },
               "data": {
@@ -649,17 +1204,68 @@
           },
           "position": {
             "x": 0,
-            "y": 17,
-            "width": 12,
+            "y": 13,
+            "width": 6,
             "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "ligas",
+      "displayName": "Ligas",
+      "layout": [
+        {
+          "widget": {
+            "name": "header_ligas",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# ⚽ SmartData Football | Ligas\n",
+                "Comparación de métricas entre las Big Five europeas"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
           }
         },
         {
           "widget": {
-            "name": "filter_league",
+            "name": "selector_metrica",
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Métrica"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "variableName": "metric_selector"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 2,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_liga_ligas",
             "queries": [
               {
-                "name": "dashboards/01f1bbb02ba5135393d45c27db779da7/datasets/01f1bbb1f997172eb0f1335f080e2859_league_name",
+                "name": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c0fd904113cb81092e75707fc6ab_league_name",
                 "query": {
                   "datasetName": "838a295a",
                   "fields": [
@@ -680,14 +1286,14 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Filtro Liga"
+                "title": "Liga"
               },
               "widgetType": "filter-multi-select",
               "encodings": {
                 "fields": [
                   {
                     "fieldName": "league_name",
-                    "queryName": "dashboards/01f1bbb02ba5135393d45c27db779da7/datasets/01f1bbb1f997172eb0f1335f080e2859_league_name"
+                    "queryName": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c0fd904113cb81092e75707fc6ab_league_name"
                   }
                 ]
               }
@@ -695,17 +1301,78 @@
           },
           "position": {
             "x": 0,
-            "y": 23,
-            "width": 6,
+            "y": 2,
+            "width": 5,
             "height": 2
           }
         },
         {
           "widget": {
-            "name": "filter_season",
+            "name": "ranking_metrica",
             "queries": [
               {
-                "name": "dashboards/01f1bbb02ba5135393d45c27db779da7/datasets/01f1bbb1f997172eb0f1335f080e2859_season_year",
+                "name": "main_query",
+                "query": {
+                  "datasetName": "838a295a",
+                  "fields": [
+                    {
+                      "name": "$metric_selector",
+                      "variable": "metric_selector"
+                    },
+                    {
+                      "name": "league_name",
+                      "expression": "`league_name`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Ranking por liga",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "$metric_selector",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "league_name",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "x-reversed"
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 5,
+            "height": 10
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_temporada_ligas",
+            "queries": [
+              {
+                "name": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c0fd904113cb81092e75707fc6ab_season_year",
                 "query": {
                   "datasetName": "838a295a",
                   "fields": [
@@ -726,14 +1393,202 @@
               "version": 2,
               "frame": {
                 "showTitle": true,
-                "title": "Filtro Temporada"
+                "title": "Temporada"
               },
               "widgetType": "filter-multi-select",
               "encodings": {
                 "fields": [
                   {
                     "fieldName": "season_year",
-                    "queryName": "dashboards/01f1bbb02ba5135393d45c27db779da7/datasets/01f1bbb1f997172eb0f1335f080e2859_season_year"
+                    "queryName": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c0fd904113cb81092e75707fc6ab_season_year"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 5,
+            "y": 2,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "linea_metrica",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "838a295a",
+                  "fields": [
+                    {
+                      "name": "league_name",
+                      "expression": "`league_name`"
+                    },
+                    {
+                      "name": "season_year",
+                      "expression": "`season_year`"
+                    },
+                    {
+                      "name": "$metric_selector",
+                      "variable": "metric_selector"
+                    }
+                  ],
+                  "disaggregated": true,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "`season_year`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Evolución por temporada"
+              },
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "season_year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "$metric_selector",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "league_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 5,
+            "y": 4,
+            "width": 7,
+            "height": 10
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "posiciones",
+      "displayName": "Posiciones",
+      "layout": [
+        {
+          "widget": {
+            "name": "header_posiciones",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# ⚽ SmartData Football | Posiciones\n",
+                "Tabla de posiciones y rating Elo de los clubes"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_liga_pos",
+            "queries": [
+              {
+                "name": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c100acf21aa38edadc6a9f035240_league_name",
+                "query": {
+                  "datasetName": "standings",
+                  "fields": [
+                    {
+                      "name": "league_name",
+                      "expression": "`league_name`"
+                    },
+                    {
+                      "name": "league_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Liga"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "league_name",
+                    "queryName": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c100acf21aa38edadc6a9f035240_league_name"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 6,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_temporada_pos",
+            "queries": [
+              {
+                "name": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c100acf21aa38edadc6a9f035240_season_year",
+                "query": {
+                  "datasetName": "standings",
+                  "fields": [
+                    {
+                      "name": "season_year",
+                      "expression": "`season_year`"
+                    },
+                    {
+                      "name": "season_year_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Temporada"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "season_year",
+                    "queryName": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c100acf21aa38edadc6a9f035240_season_year"
                   }
                 ]
               }
@@ -741,9 +1596,1090 @@
           },
           "position": {
             "x": 6,
-            "y": 23,
+            "y": 2,
             "width": 6,
             "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "tabla_posiciones",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "standings",
+                  "fields": [
+                    {
+                      "name": "position",
+                      "expression": "`position`"
+                    },
+                    {
+                      "name": "club",
+                      "expression": "`club`"
+                    },
+                    {
+                      "name": "measure(played)",
+                      "expression": "MEASURE(`played`)"
+                    },
+                    {
+                      "name": "measure(wins)",
+                      "expression": "MEASURE(`wins`)"
+                    },
+                    {
+                      "name": "measure(draws_standing)",
+                      "expression": "MEASURE(`draws_standing`)"
+                    },
+                    {
+                      "name": "measure(losses)",
+                      "expression": "MEASURE(`losses`)"
+                    },
+                    {
+                      "name": "measure(goals_for)",
+                      "expression": "MEASURE(`goals_for`)"
+                    },
+                    {
+                      "name": "measure(goals_against)",
+                      "expression": "MEASURE(`goals_against`)"
+                    },
+                    {
+                      "name": "measure(goal_diff)",
+                      "expression": "MEASURE(`goal_diff`)"
+                    },
+                    {
+                      "name": "measure(points)",
+                      "expression": "MEASURE(`points`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "`position`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Tabla de Posiciones"
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "position"
+                  },
+                  {
+                    "fieldName": "club"
+                  },
+                  {
+                    "fieldName": "measure(played)"
+                  },
+                  {
+                    "fieldName": "measure(wins)"
+                  },
+                  {
+                    "fieldName": "measure(draws_standing)"
+                  },
+                  {
+                    "fieldName": "measure(losses)"
+                  },
+                  {
+                    "fieldName": "measure(goals_for)"
+                  },
+                  {
+                    "fieldName": "measure(goals_against)"
+                  },
+                  {
+                    "fieldName": "measure(goal_diff)"
+                  },
+                  {
+                    "fieldName": "measure(points)"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 8,
+            "height": 10
+          }
+        },
+        {
+          "widget": {
+            "name": "elo_clubes",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "club_elo",
+                  "fields": [
+                    {
+                      "name": "measure(elo)",
+                      "expression": "MEASURE(`elo`)"
+                    },
+                    {
+                      "name": "club",
+                      "expression": "`club`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Rating Elo por Club",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "measure(elo)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "club",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "x-reversed"
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 4,
+            "width": 4,
+            "height": 10
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "predicciones",
+      "displayName": "Predicciones",
+      "layout": [
+        {
+          "widget": {
+            "name": "header_predicciones",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# ⚽ SmartData Football | Predicciones\n",
+                "Rendimiento del modelo predictivo basado en ratings Elo"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_liga_pred",
+            "queries": [
+              {
+                "name": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c100f39b1f6bbba781fb260b4434_league_name",
+                "query": {
+                  "datasetName": "match_predictions",
+                  "fields": [
+                    {
+                      "name": "league_name",
+                      "expression": "`league_name`"
+                    },
+                    {
+                      "name": "league_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Liga"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "league_name",
+                    "queryName": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c100f39b1f6bbba781fb260b4434_league_name"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 4,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_temporada_pred",
+            "queries": [
+              {
+                "name": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c100f39b1f6bbba781fb260b4434_season_year",
+                "query": {
+                  "datasetName": "match_predictions",
+                  "fields": [
+                    {
+                      "name": "season_year",
+                      "expression": "`season_year`"
+                    },
+                    {
+                      "name": "season_year_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Temporada"
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "season_year",
+                    "queryName": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c100f39b1f6bbba781fb260b4434_season_year"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 2,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_conjunto",
+            "queries": [
+              {
+                "name": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c100f39b1f6bbba781fb260b4434_split",
+                "query": {
+                  "datasetName": "match_predictions",
+                  "fields": [
+                    {
+                      "name": "split",
+                      "expression": "`split`"
+                    },
+                    {
+                      "name": "split_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Conjunto"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "split",
+                    "queryName": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c100f39b1f6bbba781fb260b4434_split"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 7,
+            "y": 2,
+            "width": 5,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_accuracy",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "match_predictions",
+                  "fields": [
+                    {
+                      "name": "measure(accuracy)",
+                      "expression": "MEASURE(`accuracy`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Acierto del Modelo"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(accuracy)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_always_home",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "match_predictions",
+                  "fields": [
+                    {
+                      "name": "measure(always_home_accuracy)",
+                      "expression": "MEASURE(`always_home_accuracy`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Acierto Siempre Local"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(always_home_accuracy)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 4,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_improvement",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "match_predictions",
+                  "fields": [
+                    {
+                      "name": "measure(improvement)",
+                      "expression": "MEASURE(`improvement`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Mejora vs. Siempre Local"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(improvement)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 4,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "tabla_predicciones",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "match_predictions",
+                  "fields": [
+                    {
+                      "name": "match_date",
+                      "expression": "`match_date`"
+                    },
+                    {
+                      "name": "round",
+                      "expression": "`round`"
+                    },
+                    {
+                      "name": "home_club",
+                      "expression": "`home_club`"
+                    },
+                    {
+                      "name": "away_club",
+                      "expression": "`away_club`"
+                    },
+                    {
+                      "name": "measure(prob_home_avg)",
+                      "expression": "MEASURE(`prob_home_avg`)"
+                    },
+                    {
+                      "name": "measure(prob_draw_avg)",
+                      "expression": "MEASURE(`prob_draw_avg`)"
+                    },
+                    {
+                      "name": "measure(prob_away_avg)",
+                      "expression": "MEASURE(`prob_away_avg`)"
+                    },
+                    {
+                      "name": "predicted_result",
+                      "expression": "`predicted_result`"
+                    },
+                    {
+                      "name": "actual_result",
+                      "expression": "`actual_result`"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "`match_date`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Detalle de Predicciones"
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "match_date"
+                  },
+                  {
+                    "fieldName": "round"
+                  },
+                  {
+                    "fieldName": "home_club"
+                  },
+                  {
+                    "fieldName": "away_club"
+                  },
+                  {
+                    "fieldName": "measure(prob_home_avg)"
+                  },
+                  {
+                    "fieldName": "measure(prob_draw_avg)"
+                  },
+                  {
+                    "fieldName": "measure(prob_away_avg)"
+                  },
+                  {
+                    "fieldName": "predicted_result"
+                  },
+                  {
+                    "fieldName": "actual_result"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 12,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "acierto_liga",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "match_predictions",
+                  "fields": [
+                    {
+                      "name": "league_name",
+                      "expression": "`league_name`"
+                    },
+                    {
+                      "name": "measure(accuracy)",
+                      "expression": "MEASURE(`accuracy`)"
+                    },
+                    {
+                      "name": "measure(always_home_accuracy)",
+                      "expression": "MEASURE(`always_home_accuracy`)"
+                    },
+                    {
+                      "name": "measure(accuracy_sort)",
+                      "expression": "MEASURE(`accuracy_sort`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "MEASURE(`accuracy_sort`)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Acierto por Liga"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "league_name",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "measure",
+                      "measure": {
+                        "fieldName": "measure(accuracy_sort)"
+                      }
+                    }
+                  }
+                },
+                "y": {
+                  "fields": [
+                    {
+                      "fieldName": "measure(accuracy)",
+                      "displayName": "Acierto Modelo"
+                    },
+                    {
+                      "fieldName": "measure(always_home_accuracy)",
+                      "displayName": "Acierto Siempre Local"
+                    }
+                  ],
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 12,
+            "height": 5
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "club",
+      "displayName": "Club",
+      "layout": [
+        {
+          "widget": {
+            "name": "header_club",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# ⚽ SmartData Football | Ficha del club\n",
+                "Rendimiento, rating Elo y resultados del club en todo el historial"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_club",
+            "queries": [
+              {
+                "name": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c100accb1d05b936aeb3f45db53e_club",
+                "query": {
+                  "datasetName": "club_elo",
+                  "fields": [
+                    {
+                      "name": "club",
+                      "expression": "`club`"
+                    },
+                    {
+                      "name": "club_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "filter_club_standings",
+                "query": {
+                  "datasetName": "standings",
+                  "fields": [
+                    {
+                      "name": "club",
+                      "expression": "`club`"
+                    },
+                    {
+                      "name": "club_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Club"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "club",
+                    "queryName": "dashboards/01f1c0fd90401bd1ba8fea4c279b86d9/datasets/01f1c100accb1d05b936aeb3f45db53e_club"
+                  },
+                  {
+                    "fieldName": "club",
+                    "queryName": "filter_club_standings"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_elo",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "club_elo",
+                  "fields": [
+                    {
+                      "name": "measure(elo)",
+                      "expression": "MEASURE(`elo`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Elo final"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(elo)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_cambio_elo",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "club_elo",
+                  "fields": [
+                    {
+                      "name": "measure(elo_change)",
+                      "expression": "MEASURE(`elo_change`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Cambio de Elo en la temporada"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(elo_change)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 4,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_victorias_club",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "club_elo",
+                  "fields": [
+                    {
+                      "name": "measure(win_pct)",
+                      "expression": "MEASURE(`win_pct`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "% Victorias del club"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(win_pct)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 4,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "evolucion_elo",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "club_elo",
+                  "fields": [
+                    {
+                      "name": "match_date",
+                      "expression": "`match_date`"
+                    },
+                    {
+                      "name": "measure(elo)",
+                      "expression": "MEASURE(`elo`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "`match_date`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Evolución del Elo partido a partido"
+              },
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "match_date",
+                  "displayName": "Fecha",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(elo)",
+                  "displayName": "Elo",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 12,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "partidos_club",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "club_elo",
+                  "fields": [
+                    {
+                      "name": "match_date",
+                      "expression": "`match_date`"
+                    },
+                    {
+                      "name": "is_home",
+                      "expression": "`is_home`"
+                    },
+                    {
+                      "name": "opponent",
+                      "expression": "`opponent`"
+                    },
+                    {
+                      "name": "measure(goals_for)",
+                      "expression": "MEASURE(`goals_for`)"
+                    },
+                    {
+                      "name": "measure(goals_against)",
+                      "expression": "MEASURE(`goals_against`)"
+                    },
+                    {
+                      "name": "result",
+                      "expression": "`result`"
+                    },
+                    {
+                      "name": "measure(elo)",
+                      "expression": "MEASURE(`elo`)"
+                    },
+                    {
+                      "name": "measure(elo_change_match)",
+                      "expression": "MEASURE(`elo_change_match`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "`match_date`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Partidos del club"
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "match_date"
+                  },
+                  {
+                    "fieldName": "is_home"
+                  },
+                  {
+                    "fieldName": "opponent"
+                  },
+                  {
+                    "fieldName": "measure(goals_for)"
+                  },
+                  {
+                    "fieldName": "measure(goals_against)"
+                  },
+                  {
+                    "fieldName": "result"
+                  },
+                  {
+                    "fieldName": "measure(elo)"
+                  },
+                  {
+                    "fieldName": "measure(elo_change_match)"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 12,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "kpi_titulos",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "standings",
+                  "fields": [
+                    {
+                      "name": "measure(titulos)",
+                      "expression": "MEASURE(`titulos`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Títulos de liga"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(titulos)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 4,
+            "width": 3,
+            "height": 3
           }
         }
       ],
@@ -756,5 +2692,30 @@
       "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
     },
     "applyModeEnabled": false
-  }
+  },
+  "variables": [
+    {
+      "name": "metric_selector",
+      "displayName": "metric_selector",
+      "field": {
+        "options": [
+          {
+            "expression": "MEASURE(`838a295a`.`avg_goals_per_match`)"
+          },
+          {
+            "expression": "MEASURE(`838a295a`.`home_win_pct`)"
+          },
+          {
+            "expression": "MEASURE(`838a295a`.`total_matches`)"
+          },
+          {
+            "expression": "MEASURE(`838a295a`.`total_goals`)"
+          },
+          {
+            "expression": "MEASURE(`838a295a`.`classic_count`)"
+          }
+        ]
+      }
+    }
+  ]
 }
