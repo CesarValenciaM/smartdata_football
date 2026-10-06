@@ -17,7 +17,7 @@ jobs:
       run: |
         ORIGIN_HOST=${{ secrets.DATABRICKS_ORIGIN_HOST }}
         ORIGIN_TOKEN=${{ secrets.DATABRICKS_ORIGIN_TOKEN }}
-        NOTEBOOK_BASE="/Workspace/Users/cvalenciam@uni.pe/smartdata_football/proceso"
+        NOTEBOOK_BASE="/Workspace/Users/cvalencia@fundacionweperu.onmicrosoft.com/smartdata_football/proceso"
         NOTEBOOKS=("1.Preparacion_Ambiente" "2.Ingest_clubs" "2.Ingest_leagues_data" "2.Ingest_matches_data" "3.Transform" "4.Load" "7.Elo_Ranking" "8.Prediccion_Resultados" "5.Grants_Medallion")  # Agrega más según necesitesas
         mkdir -p notebooks_to_deploy
         for nb in "${NOTEBOOKS[@]}"; do
