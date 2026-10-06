@@ -230,7 +230,7 @@
       "displayName": "club_elo",
       "config": {
         "version": "1.1",
-        "source": "football_prod.gold.club_elo",
+        "source": "SELECT *,\n  MAX(season_year) OVER () AS global_max_season,\n  MIN(match_date) OVER (PARTITION BY season_year) AS global_season_start_date,\n  MAX(match_date) OVER (PARTITION BY season_year) AS global_season_end_date,\n  MIN(match_date) OVER (PARTITION BY club, season_year) AS club_season_start_date,\n  MAX(match_date) OVER (PARTITION BY club, season_year) AS club_season_end_date\nFROM football_prod.gold.club_elo\n",
         "dimensions": [
           {
             "name": "match_date",
@@ -273,9 +273,14 @@
             "displayName": "Condición"
           },
           {
-            "name": "result",
+            "name": "result_display",
             "expr": "CASE result WHEN 'W' THEN 'Victoria' WHEN 'D' THEN 'Empate' ELSE 'Derrota' END",
             "displayName": "Resultado"
+          },
+          {
+            "name": "max_match_date",
+            "expr": "MAX(match_date) OVER ()",
+            "displayName": "Fecha máxima"
           }
         ],
         "measures": [
@@ -292,8 +297,20 @@
             }
           },
           {
+            "name": "elo_latest",
+            "expr": "MAX(elo_post) FILTER (WHERE match_date = max_match_date)",
+            "displayName": "Elo final",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 0.0
+              }
+            }
+          },
+          {
             "name": "elo_change",
-            "expr": "MAX_BY(elo_post, match_date) - MAX_BY(elo_pre, season_year * 100000 - DATEDIFF(match_date, DATE'1900-01-01'))",
+            "expr": "COALESCE(MAX(elo_post) FILTER (WHERE season_year = global_max_season AND match_date = global_season_end_date), MAX(elo_post) FILTER (WHERE season_year = global_max_season AND match_date = club_season_end_date)) - COALESCE(MAX(elo_pre) FILTER (WHERE season_year = global_max_season AND match_date = global_season_start_date), MAX(elo_pre) FILTER (WHERE season_year = global_max_season AND match_date = club_season_start_date))",
             "displayName": "Cambio de Elo en la temporada",
             "format": {
               "type": "number",
@@ -329,7 +346,7 @@
           },
           {
             "name": "matches_count",
-            "expr": "COUNT(match_id)",
+            "expr": "COUNT(1)",
             "displayName": "Partidos",
             "format": {
               "type": "number",
@@ -341,7 +358,7 @@
           },
           {
             "name": "win_pct",
-            "expr": "COUNT_IF(result = 'W') * 1.0 / COUNT(match_id)",
+            "expr": "COUNT_IF(result = 'W') * 1.0 / COUNT(1)",
             "displayName": "% Victorias del club",
             "format": {
               "type": "percentage",
@@ -2425,8 +2442,8 @@
                   "datasetName": "club_elo",
                   "fields": [
                     {
-                      "name": "measure(elo)",
-                      "expression": "MEASURE(`elo`)"
+                      "name": "measure(elo_latest)",
+                      "expression": "MEASURE(`elo_latest`)"
                     }
                   ],
                   "disaggregated": false
@@ -2436,13 +2453,16 @@
             "spec": {
               "frame": {
                 "showTitle": true,
-                "title": "Elo final"
+                "title": {
+                  "value": "Elo final",
+                  "fields": []
+                }
               },
               "version": 2,
               "widgetType": "counter",
               "encodings": {
                 "value": {
-                  "fieldName": "measure(elo)",
+                  "fieldName": "measure(elo_latest)",
                   "rowNumber": 0
                 }
               },
@@ -2479,7 +2499,10 @@
             "spec": {
               "frame": {
                 "showTitle": true,
-                "title": "Cambio de Elo en la temporada"
+                "title": {
+                  "value": "Cambio de Elo en la temporada",
+                  "fields": []
+                }
               },
               "version": 2,
               "widgetType": "counter",
@@ -2522,7 +2545,10 @@
             "spec": {
               "frame": {
                 "showTitle": true,
-                "title": "% Victorias del club"
+                "title": {
+                  "value": "% Victorias del club",
+                  "fields": []
+                }
               },
               "version": 2,
               "widgetType": "counter",
@@ -2637,8 +2663,8 @@
                       "expression": "MEASURE(`goals_against`)"
                     },
                     {
-                      "name": "result",
-                      "expression": "`result`"
+                      "name": "result_display",
+                      "expression": "`result_display`"
                     },
                     {
                       "name": "measure(elo)",
@@ -2649,20 +2675,17 @@
                       "expression": "MEASURE(`elo_change_match`)"
                     }
                   ],
-                  "disaggregated": false,
-                  "orders": [
-                    {
-                      "direction": "DESC",
-                      "expression": "`match_date`"
-                    }
-                  ]
+                  "disaggregated": false
                 }
               }
             ],
             "spec": {
               "frame": {
                 "showTitle": true,
-                "title": "Partidos del club"
+                "title": {
+                  "value": "Partidos del club",
+                  "fields": []
+                }
               },
               "version": 2,
               "widgetType": "table",
@@ -2684,7 +2707,7 @@
                     "fieldName": "measure(goals_against)"
                   },
                   {
-                    "fieldName": "result"
+                    "fieldName": "result_display"
                   },
                   {
                     "fieldName": "measure(elo)"
