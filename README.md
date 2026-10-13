@@ -93,16 +93,26 @@ smartdata_football/
 │   ├── 3.Transform.ipynb
 │   ├── 4.Load.ipynb
 │   ├── 5.Grants_Medallion.ipynb
-│   ├── 6.DeltaSharing.ipynb
 │   ├── 7.Elo_Ranking.ipynb
 │   └── 8.Prediccion_Resultados.ipynb
+├── machine-learning/              # Notebooks de Elo y del modelo predictivo
+│   ├── 7.Elo_Ranking.ipynb
+│   └── 8.Prediccion_Resultados.ipynb
+├── delta-sharing/
+│   └── 6.DeltaSharing.ipynb       # Publica las tablas gold en el share (fuera del job)
+├── seguridad/
+│   └── 5.Grants_Medallion.ipynb   # Permisos (GRANT) para los usuarios
 ├── PrepAmb/                       # Preparación del ambiente para correrla de forma aislada
-├── seguridad/                     # Laboratorio de permisos (GRANT) fuera del job
-├── reversion/                     # Teardown: borra tablas, archivos y catálogo
+├── reversion/                     # Teardown: revoca permisos, borra tablas, archivos y catálogo
 ├── dashboard/
-│   ├── dashboard.lvdash.json      # Dashboard AI/BI de Databricks
-│   ├── dashboard.pbix             # Dashboard de Power BI
-│   └── dashboard.pbit             # Plantilla de Power BI (sin datos)
+│   ├── dashboard_ai_bi/
+│   │   └── dashboard.lvdash.json  # Dashboard AI/BI de Databricks
+│   └── powerbi/
+│       ├── dashboard.pbix         # Dashboard de Power BI
+│       ├── dashboard.pbit         # Plantilla de Power BI (sin datos)
+│       └── README.md
+├── evidencias/                    # Capturas del proceso de construcción y despliegue
+├── certificaciones/               # Acreditación Databricks Fundamentals
 └── docs/
     └── arquitectura.svg           # Diagrama de arquitectura
 ```
@@ -200,10 +210,10 @@ La ventana de 8 partidos, `C = 0.01` y la regresión del Elo al 10 % se eligiero
 ## 9. Gobierno y seguridad
 
 - **Unity Catalog** gobierna catálogo, esquemas, tablas externas y el modelo registrado.
-- **`5.Grants_Medallion`** otorga `USE CATALOG`, `USE SCHEMA` y `SELECT` sobre las tablas de las tres capas. En el job, sus celdas están marcadas con `%skip`; la versión completa está en `seguridad/`.
-- **Delta Sharing** (`6.DeltaSharing`) comparte solo las 5 tablas gold, sin historial, con el recipient `ExternalCompanys`. Como `1.Preparacion_Ambiente` recrea el catálogo, el notebook vuelve a agregar las tablas al share en cada ejecución. También desactiva los deletion vectors y reescribe los archivos (`REORG ... APPLY (PURGE)`), porque Power BI no lee tablas con esa característica.
+- **`5.Grants_Medallion`** otorga `USE CATALOG`, `USE SCHEMA` y `SELECT` sobre las tablas de las tres capas. En el job, sus celdas están marcadas con `%skip`; la versión completa, con los usuarios como parámetro, está en `seguridad/`.
+- **Delta Sharing** (`delta-sharing/6.DeltaSharing`) comparte solo las 5 tablas gold, sin historial, con el recipient `ExternalCompanys`. Como `1.Preparacion_Ambiente` recrea el catálogo, el notebook vuelve a agregar las tablas al share en cada ejecución. También desactiva los deletion vectors y reescribe los archivos (`REORG ... APPLY (PURGE)`), porque Power BI no lee tablas con esa característica.
 - **Secretos**: los tokens de Databricks viven en GitHub Secrets y el token de Delta Sharing no se guarda en el repositorio.
-- **Reversión**: `reversion/1. Drop-Medallion` elimina las tablas, sus archivos en S3 y el catálogo.
+- **Reversión**: `reversion/1. Drop-Medallion` revoca los permisos otorgados y elimina las tablas, sus archivos en S3 y el catálogo.
 
 ## 10. CI/CD
 
@@ -230,8 +240,8 @@ Ambos dashboards tienen las mismas cinco páginas:
 | Predicciones | Acierto del modelo frente a "siempre local", acierto por liga y detalle de predicciones |
 | Club | Ficha del club: Elo final, cambio de Elo en la temporada, títulos, % de victorias, evolución del Elo e historial de partidos |
 
-- **Databricks AI/BI** (`dashboard/dashboard.lvdash.json`): se importa en el workspace y consulta `football_prod.gold`.
-- **Power BI** (`dashboard/dashboard.pbix`): se conecta al share con el conector Delta Sharing. Para actualizarlo hace falta un archivo `config.share` vigente del recipient; su token se ingresa como credencial en Power BI Desktop.
+- **Databricks AI/BI** (`dashboard/dashboard_ai_bi/dashboard.lvdash.json`): se importa en el workspace y consulta `football_prod.gold`.
+- **Power BI** (`dashboard/powerbi/dashboard.pbix`): se conecta al share con el conector Delta Sharing. Para actualizarlo hace falta un archivo `config.share` vigente del recipient; su token se ingresa como credencial en Power BI Desktop.
 
 ## 12. Cómo ejecutarlo
 
@@ -239,8 +249,8 @@ Ambos dashboards tienen las mismas cinco páginas:
 2. Configura en Unity Catalog la credencial y la external location que dan acceso al bucket.
 3. Importa la carpeta `proceso/` en el workspace de Databricks.
 4. Ejecuta `1.Preparacion_Ambiente` y luego el resto en el orden del job, o deja que el CI/CD cree y ejecute `WF_ADB`.
-5. Ejecuta `6.DeltaSharing` para publicar las tablas gold.
-6. Importa `dashboard/dashboard.lvdash.json` en Databricks y abre `dashboard/dashboard.pbix` en Power BI Desktop.
+5. Ejecuta `delta-sharing/6.DeltaSharing` para publicar las tablas gold.
+6. Importa `dashboard/dashboard_ai_bi/dashboard.lvdash.json` en Databricks y abre `dashboard/powerbi/dashboard.pbix` en Power BI Desktop.
 
 Consultas de ejemplo:
 
