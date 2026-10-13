@@ -1,235 +1,273 @@
-# smartdata_football
+# ⚽ smartdata_football
 
-Pipeline de ingeniería de datos para fútbol de las 5 grandes ligas europeas, con la misma arquitectura medallion del proyecto [CICDSMARTDATA3007](https://github.com/AnthonyHuaccachiA/CICDSMARTDATA3007) (F1).
+**Trabajo final · Ingeniería de Datos e IA con Databricks**
 
-Usa Databricks, Azure Data Lake, Unity Catalog y un job de GitHub Actions.
+Pipeline de ingeniería de datos y machine learning sobre los partidos de las cinco grandes ligas europeas (Premier League, La Liga, Serie A, Bundesliga y Ligue 1) entre las temporadas 2018/19 y 2024/25. El proyecto implementa una arquitectura medallion (bronze, silver y gold) en Databricks con Unity Catalog, almacena los datos en AWS S3, entrena un modelo de predicción de resultados con MLflow, despliega todo con CI/CD en GitHub Actions y publica los resultados en un dashboard de Databricks y en Power BI mediante Delta Sharing.
 
-**Convención de nombres (Unity Catalog):**
+## Contenido
 
-| Nivel | Nombre |
+1. [Objetivos](#1-objetivos)
+2. [Arquitectura](#2-arquitectura)
+3. [Tecnologías](#3-tecnologías)
+4. [Origen de los datos](#4-origen-de-los-datos)
+5. [Estructura del repositorio](#5-estructura-del-repositorio)
+6. [Pipeline de datos](#6-pipeline-de-datos)
+7. [Modelo de datos](#7-modelo-de-datos)
+8. [Machine learning](#8-machine-learning)
+9. [Gobierno y seguridad](#9-gobierno-y-seguridad)
+10. [CI/CD](#10-cicd)
+11. [Consumo: dashboards](#11-consumo-dashboards)
+12. [Cómo ejecutarlo](#12-cómo-ejecutarlo)
+13. [Resultados](#13-resultados)
+
+## 1. Objetivos
+
+- Construir un pipeline reproducible que lleve los datos crudos de partidos hasta tablas analíticas listas para consumo.
+- Aplicar la arquitectura medallion con tablas Delta gobernadas por Unity Catalog.
+- Calcular indicadores de negocio: KPIs por liga y temporada, tablas de posiciones, estadísticas por mes y un rating Elo por club.
+- Entrenar, registrar y versionar un modelo que estime la probabilidad de victoria local, empate o victoria visitante.
+- Automatizar el despliegue a producción con CI/CD y compartir los resultados con consumidores externos.
+
+## 2. Arquitectura
+
+![Arquitectura de smartdata_football](docs/arquitectura.svg)
+
+<sub>Íconos de [Simple Icons](https://simpleicons.org) (CC0). Las marcas pertenecen a sus respectivos dueños.</sub>
+
+El flujo tiene cinco bloques:
+
+| Bloque | Qué hace |
 |---|---|
-| Proyecto / repo / carpeta Workspace | `smartdata_football` |
-| Catálogo | `football_dev` (dominio + ambiente) |
-| Schemas | `bronze`, `silver`, `gold` |
-| Tabla gold | `season_stats` |
+| **Fuente** | El dataset de Kaggle (un CSV plano) se normalizó en tres archivos: `leagues.csv`, `matches.csv` y `clubs.json`. |
+| **Almacenamiento** | Los archivos se suben a la carpeta `raw/` del bucket S3. Las tablas Delta de cada capa se guardan como tablas externas en `s3://<bucket>/<catalogo>/<capa>/<tabla>`. |
+| **Procesamiento** | Databricks ingesta los archivos en **bronze**, los limpia y enriquece en **silver** y genera las tablas analíticas de **gold**, incluido el rating Elo y las predicciones del modelo. |
+| **Machine learning** | MLflow registra el experimento (parámetros, métricas por temporada) y el modelo en Unity Catalog. |
+| **Consumo** | Un dashboard AI/BI de Databricks lee gold directamente; Power BI lee las mismas tablas a través de Delta Sharing. |
 
-El contenedor ADLS de la capa gold sigue llamándose `golden` (igual que en el curso/F1) para no exigir un contenedor nuevo. El schema de Unity Catalog sí es `gold`.
+El job `WF_ADB` orquesta las tareas en producción, y GitHub Actions lo recrea y ejecuta cada vez que se hace merge a `main`.
 
-## Origen de los datos
+## 3. Tecnologías
 
-La data completa sale de [Football Stats - Top 5 Leagues European 2018–2025](https://www.kaggle.com/datasets/clemendes/football-stats-top-5-leagues-2018-to-2025) (`archive.zip` → `stats_top5_leagues._2018_2025.csv`): 12 532 partidos, 144 clubes, 7 temporadas (2018/19–2024/25), 5 ligas.
+| Componente | Uso en el proyecto |
+|---|---|
+| Databricks (PySpark, Spark SQL) | Procesamiento de las capas bronze, silver y gold |
+| Delta Lake | Formato de todas las tablas (particionado, overwrite, `REORG`) |
+| Unity Catalog | Catálogos, esquemas, tablas externas, permisos y registro de modelos |
+| AWS S3 | Almacenamiento de archivos crudos y de las tablas Delta |
+| Databricks Workflows | Job `WF_ADB` con dependencias entre tareas |
+| MLflow + scikit-learn | Entrenamiento, validación, seguimiento y registro del modelo |
+| Delta Sharing | Publicación de las tablas gold para consumidores externos |
+| Databricks AI/BI | Dashboard dentro del workspace |
+| Power BI | Dashboard externo conectado por Delta Sharing |
+| GitHub Actions | CI/CD de notebooks y del job |
 
-El CSV original es plano (`Div`, `League`, `Date`, `HomeTeam`, `AwayTeam`, `FTHG`, `FTAG`, `Season`, etc.). Aquí se **normalizó** en 3 archivos, igual que en F1 (2 CSV + 1 JSON):
+## 4. Origen de los datos
 
-| Kaggle (plano) | Este proyecto | Análogo F1 |
+Los datos salen de [Football Stats - Top 5 Leagues European 2018–2025](https://www.kaggle.com/datasets/clemendes/football-stats-top-5-leagues-2018-to-2025) (`stats_top5_leagues._2018_2025.csv`): **12 532 partidos, 144 clubes, 5 ligas y 7 temporadas**.
+
+El CSV original es plano (una fila por partido con `Div`, `Date`, `HomeTeam`, `AwayTeam`, `FTHG`, `FTAG`, `Season`, etc.). Para modelar un caso más realista se normalizó en tres archivos, que están en `datasets/`:
+
+| Archivo | Formato | Contenido |
 |---|---|---|
-| `Div` / `League` | `datasets/leagues.csv` | `circuits.csv` |
-| partidos y goles | `datasets/matches.csv` | `races.csv` |
-| `HomeTeam` / `AwayTeam` | `datasets/clubs.json` | `constructors.json` |
+| `leagues.csv` | CSV con encabezado | 5 ligas: `league_id`, `league_ref`, `name`, `country`, `country_code`, `confederation`, `tier`, `founded_year`. |
+| `matches.csv` | CSV con encabezado | 12 532 partidos: `match_id`, `season_year`, `round`, `match_date`, `league_id`, `home_club`, `away_club`, goles finales y al descanso, y estadísticas por equipo (`home_`/`away_`): `shots`, `shots_on_target`, `corners`, `fouls`, `yellow_cards`, `red_cards`. |
+| `clubs.json` | Arreglo JSON | 144 clubes: `club_id`, `club_ref`, `name`, `country`, `city`, `founded_year`, `league_id`. |
 
-`datasets/` ya tiene el dataset **completo**, listo para subir al contenedor `raw` de ADLS. El filtro silver `season_year >= 2010` deja pasar todas las temporadas de este archivo (empiezan en 2018).
+`round` es la jornada (1–38, o 1–34 en ligas de 18 clubes), asignada por orden cronológico dentro de cada liga y temporada.
 
-## Flujo
+## 5. Estructura del repositorio
 
 ```
-raw (ADLS)
-  leagues.csv  +  matches.csv  +  clubs.json
-        │
-        ▼
-bronze (football_dev.bronze)
-  leagues  |  matches (particionado por season_year)  |  clubs
-        │
-        ▼  join + reglas de negocio
-silver (football_dev.silver.matches_transformed)
-        │
-        ├─▶ agregaciones  ─▶ gold.season_stats | gold.standings | gold.calendar_stats
-        │
-        └─▶ Elo partido a partido ─▶ gold.club_elo
-                    │
-                    ▼  forma reciente + Elo → modelo MLflow
-              gold.match_predictions  (+ modelo gold.match_outcome_model en Unity Catalog)
+smartdata_football/
+├── .github/workflows/
+│   └── deploy-notebook.yml        # CI/CD: despliega notebooks y recrea el job WF_ADB
+├── datasets/                      # Archivos de entrada (capa raw)
+│   ├── leagues.csv
+│   ├── matches.csv
+│   └── clubs.json
+├── proceso/                       # Pipeline principal (lo que despliega el CI/CD)
+│   ├── 1.Preparacion_Ambiente.ipynb
+│   ├── 2.Ingest_clubs.ipynb
+│   ├── 2.Ingest_leagues_data.ipynb
+│   ├── 2.Ingest_matches_data.ipynb
+│   ├── 3.Transform.ipynb
+│   ├── 4.Load.ipynb
+│   ├── 5.Grants_Medallion.ipynb
+│   ├── 6.DeltaSharing.ipynb
+│   ├── 7.Elo_Ranking.ipynb
+│   └── 8.Prediccion_Resultados.ipynb
+├── PrepAmb/                       # Preparación del ambiente para correrla de forma aislada
+├── seguridad/                     # Laboratorio de permisos (GRANT) fuera del job
+├── reversion/                     # Teardown: borra tablas, archivos y catálogo
+├── dashboard/
+│   ├── dashboard.lvdash.json      # Dashboard AI/BI de Databricks
+│   ├── dashboard.pbix             # Dashboard de Power BI
+│   └── dashboard.pbit             # Plantilla de Power BI (sin datos)
+└── docs/
+    └── arquitectura.svg           # Diagrama de arquitectura
 ```
 
-Job `WF_FOOTBALL`:
+## 6. Pipeline de datos
 
-1. Preparación del ambiente
-2. Ingesta de ligas, partidos y clubes (en paralelo)
-3. Transformación bronze → silver
-4. Carga silver → gold y, en paralelo, ranking Elo y luego predicción de resultados
-5. Grants de Unity Catalog (espera a la carga y a la predicción)
+### Notebooks
 
-## Catálogo de archivos
-
-### Raíz
-
-| Archivo | Qué es |
-|---|---|
-| `README.md` | Este documento: propósito, origen de datos, flujo y catálogo de archivos. |
-
-### `datasets/` — datos de entrada (capa raw)
-
-| Archivo | Formato | Qué contiene | Cómo se usa |
-|---|---|---|---|
-| `datasets/leagues.csv` | CSV con header | 5 ligas: Premier League, La Liga, Serie A, Bundesliga, Ligue 1. Columnas: `league_id`, `league_ref`, `name`, `country`, `country_code`, `confederation`, `tier`, `founded_year`. | Lo lee `2.Ingest_leagues_data`. |
-| `datasets/matches.csv` | CSV con header | 12 532 partidos (2018/19–2024/25). Columnas: `match_id`, `season_year`, `round`, `match_date`, `league_id`, `home_club`, `away_club`, `home_goals`, `away_goals`, `ht_home_goals`, `ht_away_goals` y estadísticas por equipo (`home_`/`away_`): `shots`, `shots_on_target`, `corners`, `fouls`, `yellow_cards`, `red_cards`. `round` es la jornada (1–38, o 1–34 en ligas de 18 clubes), asignada por orden cronológico dentro de cada liga y temporada; los partidos aplazados cuentan en la jornada en que se jugaron. | Lo lee `2.Ingest_matches_data`. |
-| `datasets/clubs.json` | JSON array | 144 clubes con `club_id`, `club_ref`, `name`, `country`, `city`, `founded_year`, `league_id`. | Lo lee `2.Ingest_clubs`. |
-
-Hay que copiar estos 3 archivos al contenedor ADLS `raw` antes de correr la ingesta.
-
-### `proceso/` — pipeline principal (el que despliega el CI/CD)
-
-| Archivo | Capa | Qué hace |
+| Notebook | Capa | Qué hace |
 |---|---|---|
-| `proceso/1.Preparacion_Ambiente.ipynb` | Infra | Crea external locations (`exlt-raw`, `exlt-bronze`, `exlt-silver`, `exlt-golden`, `exlt-metastore`), el catálogo `football_dev`, schemas y tablas Delta vacías. Widget: `storageName`. |
-| `proceso/2.Ingest_leagues_data.ipynb` | Bronze | Lee `leagues.csv`, aplica schema y escribe `football_dev.bronze.leagues` con `ingestion_date`. |
-| `proceso/2.Ingest_matches_data.ipynb` | Bronze | Lee `matches.csv` y escribe `football_dev.bronze.matches` particionado por `season_year`. |
-| `proceso/2.Ingest_clubs.ipynb` | Bronze | Lee `clubs.json` (multiline) y escribe `football_dev.bronze.clubs`. |
-| `proceso/3.Transform.ipynb` | Silver | Cruza las **3** tablas bronze. Filtra `season_year >= 2010`. Crea `result_type`, `goal_diff_category`, `match_intensity`, `is_classic`, `season_age`, `ht_result`, `is_comeback`, `second_half_goals` y totales de tiros, córners, faltas y tarjetas. Escribe `football_dev.silver.matches_transformed`. |
-| `proceso/4.Load.ipynb` | Gold | Escribe `football_dev.gold.season_stats` (KPIs por temporada, país y liga), `football_dev.gold.standings` (tabla de posiciones por temporada y liga, con funciones de ventana) y `football_dev.gold.calendar_stats` (goles y resultados por jornada y mes). |
-| `proceso/7.Elo_Ranking.ipynb` | Gold | Calcula el Elo de cada club partido a partido y escribe `football_dev.gold.club_elo`. |
-| `proceso/8.Prediccion_Resultados.ipynb` | Gold / ML | Entrena un modelo de local, empate o visitante con la forma reciente y el Elo, lo registra en MLflow (Unity Catalog) y escribe `football_dev.gold.match_predictions`. |
-| `proceso/5.Grants_Medallion.ipynb` | Seguridad | `GRANT` de catálogo, schema y `SELECT` sobre las tablas bronze, silver y gold. |
-| `proceso/6.DeltaSharing.ipynb` | Consumo | Crea el share `FOOTBALL_SHARE` con las 5 tablas gold (`season_stats`, `standings`, `calendar_stats`, `club_elo`, `match_predictions`) y el recipient que consume Power BI. Solo agrega las tablas que faltan, así que se puede volver a correr. |
+| `1.Preparacion_Ambiente` | Infraestructura | Borra y recrea el catálogo, los esquemas `raw`, `bronze`, `silver` y `gold`, y las tablas Delta externas vacías en S3. |
+| `2.Ingest_leagues_data` | Bronze | Lee `leagues.csv` con schema explícito y escribe `bronze.leagues` con `ingestion_date`. |
+| `2.Ingest_matches_data` | Bronze | Lee `matches.csv` y escribe `bronze.matches` particionada por `season_year`. |
+| `2.Ingest_clubs` | Bronze | Lee `clubs.json` (multilínea) y escribe `bronze.clubs`. |
+| `3.Transform` | Silver | Cruza partidos, clubes (local y visitante) y ligas, limpia nulos y crea los atributos de negocio. Escribe `silver.matches_transformed`. |
+| `4.Load` | Gold | Escribe `gold.season_stats`, `gold.standings` y `gold.calendar_stats`. |
+| `7.Elo_Ranking` | Gold | Calcula el Elo de cada club partido a partido y escribe `gold.club_elo`. |
+| `8.Prediccion_Resultados` | Gold / ML | Entrena y registra el modelo en MLflow y escribe `gold.match_predictions`. |
+| `5.Grants_Medallion` | Gobierno | Otorga permisos de Unity Catalog sobre catálogo, esquemas y tablas. |
+| `6.DeltaSharing` | Consumo | Publica las 5 tablas gold en el share `FOOTBALL_SHARE` para el recipient de Power BI. |
 
-Widgets comunes de ingesta: `container`, `catalogo`, `esquema`, `storageName`.  
-Widgets de transform/load: `catalogo`, `esquema_source`, `esquema_sink`.
+Todos los notebooks reciben parámetros por widgets (`catalogo`, `storageName`, `container`, `esquema`, `esquema_source`, `esquema_sink`), así que el mismo código corre en desarrollo (`football_dev`) y en producción (`football_prod`).
 
-### `PrepAmb/` — copia de preparación
+### Job `WF_ADB`
 
-| Archivo | Qué es |
-|---|---|
-| `PrepAmb/1.- Preparacion_Ambiente.ipynb` | Misma lógica que `proceso/1.Preparacion_Ambiente.ipynb`. Se deja aparte, como en el proyecto F1, para correr la preparación de forma aislada. |
+```
+preparacion_ambiente
+   ├── ingest_clubs ─────────┐
+   ├── ingest_leagues_data ──┼── transform ──┬── Load ───────────────────┐
+   └── ingest_matches_data ──┘               └── elo ── prediccion ──────┴── grants
+```
 
-### `seguridad/` — laboratorio de permisos
+- Las tres ingestas corren en paralelo.
+- `Load` y `elo` corren en paralelo después de `transform`; `prediccion` espera a `elo`.
+- `grants` espera a `Load` y a `prediccion`.
+- Cada tarea tiene 2 reintentos y un tope de 1 hora. El job tiene una programación diaria a las 8:00 (America/Lima), en pausa por defecto.
+- `6.DeltaSharing` no forma parte del job: se ejecuta después, cuando las tablas gold ya están cargadas.
 
-| Archivo | Qué es |
-|---|---|
-| `seguridad/4. Grants-Medallion.ipynb` | Ejemplos más amplios: `GRANT`/`REVOKE`, `SHOW GRANTS`, external locations, grupo `data_engineers`. No forma parte del job `WF_FOOTBALL`. |
+## 7. Modelo de datos
 
-### `reversion/` — teardown
-
-| Archivo | Qué es |
-|---|---|
-| `reversion/1. Drop-Medallion.ipynb` | Borra tablas y carpetas Delta de fútbol (`.../football/...`) y el catálogo `football_dev`. No toca `catalog_au` (F1). |
-
-### `dashboard/`
-
-| Archivo | Qué es |
-|---|---|
-| `dashboard/dashboard.lvdash.json` | Dashboard de Databricks (AI/BI) sobre `gold.season_stats`. |
-| `dashboard/dashboard.pbix` | Dashboard de Power BI conectado por Delta Sharing (`football_share.gold.season_stats`). |
-| `dashboard/dashboard.pbit` | Plantilla de Power BI (modelo, medidas y páginas, sin datos). |
-
-### `.github/workflows/` — CI/CD
-
-| Archivo | Qué es |
-|---|---|
-| `.github/workflows/deploy-notebook.yml` | Al hacer push a `main`: exporta los notebooks de `proceso/` desde el workspace origen, los importa a `/smartdata_football`, recrea el job `WF_FOOTBALL` en el cluster `cluster_SD`, lo ejecuta y lo monitorea. |
-
-Secrets necesarios: `DATABRICKS_ORIGIN_HOST`, `DATABRICKS_ORIGIN_TOKEN`, `DATABRICKS_DEST_HOST`, `DATABRICKS_DEST_TOKEN`.
-
-## Tablas que crea el pipeline
+Catálogo `football_dev` (desarrollo) o `football_prod` (producción), con los esquemas `bronze`, `silver` y `gold`.
 
 ### Bronze
 
-- `football_dev.bronze.leagues`
-- `football_dev.bronze.matches` (particionada por `season_year`)
-- `football_dev.bronze.clubs`
+| Tabla | Descripción |
+|---|---|
+| `bronze.leagues` | Ligas tal como vienen del CSV, con `ingestion_date`. |
+| `bronze.matches` | Partidos con goles y estadísticas por equipo, particionada por `season_year`. |
+| `bronze.clubs` | Clubes del JSON. |
 
-### Silver — `football_dev.silver.matches_transformed`
+### Silver: `silver.matches_transformed`
 
-Columnas de negocio:
+Un registro por partido con el nombre de la liga y los datos de ambos clubes. Reglas de negocio:
 
-| Columna | Significado |
+| Columna | Regla |
 |---|---|
 | `result_type` | `Local`, `Empate` o `Visitante` |
-| `goal_diff_category` | `Ajustado` (0–1), `Normal` (2), `Goleada` (3+) |
-| `match_intensity` | `Baja` (≤2 goles), `Media` (3–4), `Alta` (5+) |
-| `is_classic` | `Clasico` o `Regular` (Madrid–Barça, United–Liverpool, Milan–Inter, etc.) |
+| `goal_diff_category` | `Ajustado` (0–1 goles de diferencia), `Normal` (2), `Goleada` (3+) |
+| `match_intensity` | `Baja` (≤ 2 goles), `Media` (3–4), `Alta` (5+) |
+| `is_classic` | `Clasico` para los clásicos (Real Madrid–Barcelona, United–Liverpool, Milan–Inter, Bayern–Dortmund, PSG–Marsella, etc.) o `Regular` |
 | `season_age` | Años desde la temporada |
-| `ht_result` | Resultado al descanso: `Local`, `Empate` o `Visitante` |
+| `ht_result` | Resultado al descanso |
 | `is_comeback` | `true` si el equipo que perdía al descanso ganó el partido |
-| `second_half_goals` | Goles marcados en el segundo tiempo |
-| `home_*` / `away_*` | Tiros, tiros a puerta, córners, faltas, amarillas y rojas por equipo |
+| `second_half_goals` | Goles del segundo tiempo |
 | `total_shots`, `total_shots_on_target`, `total_corners`, `total_fouls`, `total_cards` | Totales del partido |
 
-### Gold — `football_dev.gold.season_stats`
+### Gold
 
-KPIs por temporada, país y liga: `conteo`, `total_goals`, `max_goals`, `min_goals`, `classic_count`, `home_win_count`, `away_win_count`, `draw_count`, `comeback_count`, `second_half_goals`, `total_shots`, `total_shots_on_target`, `total_corners`, `total_fouls`, `total_yellow_cards`, `total_red_cards`.
+| Tabla | Granularidad | Contenido |
+|---|---|---|
+| `gold.season_stats` | Temporada × liga | Partidos, goles (total, máximo, mínimo), clásicos, victorias locales y visitantes, empates, remontadas, goles del segundo tiempo, tiros, tiros a puerta, córners, faltas y tarjetas. |
+| `gold.standings` | Temporada × liga × club | Tabla de posiciones: PJ, G, E, P, GF, GC, DG, puntos, puntos de local y visitante, forma de los últimos 5 partidos (`last5_form`) y `zone` (`Campeon`, `Champions League`, `Media tabla`, `Descenso`). Desempate por puntos, diferencia de goles, goles a favor y nombre. |
+| `gold.calendar_stats` | Temporada × liga × jornada × mes | Partidos, goles, resultados, remontadas y tarjetas; `month_name` en español y `season_month_order` de agosto (1) a julio (12). |
+| `gold.club_elo` | Partido × club | Elo antes y después del partido (`elo_pre`, `elo_post`, `elo_change`), Elo del rival, goles y resultado (`W`/`D`/`L`). |
+| `gold.match_predictions` | Partido | Probabilidades `prob_home`, `prob_draw`, `prob_away`, la predicción, el resultado real, `is_correct` y `split` (`entrenamiento` / `prueba`). |
 
-Con ellas se derivan precisión de tiro (`total_shots_on_target / total_shots`), conversión (`total_goals / total_shots_on_target`), tarjetas por partido y % de goles en el segundo tiempo.
+**Rating Elo** (`7.Elo_Ranking`): cada liga se calcula por separado; todos los clubes arrancan en 1500 y los ascendidos en 1450; K = 20, ventaja de local de 60 puntos y un multiplicador por diferencia de goles. Al empezar cada temporada el rating se acerca un 10 % a 1500.
 
-### Gold — `football_dev.gold.standings`
+## 8. Machine learning
 
-Tabla de posiciones por temporada y liga (682 filas: 18 o 20 clubes por liga):
+El notebook `8.Prediccion_Resultados` estima, antes de cada partido, la probabilidad de victoria local, empate o victoria visitante.
 
-| Columna | Significado |
+| Aspecto | Detalle |
 |---|---|
-| `position` | Puesto final. Desempate: puntos, diferencia de goles, goles a favor y nombre |
-| `played`, `wins`, `draws`, `losses` | Partidos jugados, ganados, empatados y perdidos |
-| `goals_for`, `goals_against`, `goal_diff`, `points` | Goles a favor, en contra, diferencia y puntos (3 / 1 / 0) |
-| `home_points`, `away_points` | Puntos de local y de visitante |
-| `shots`, `shots_on_target`, `yellow_cards`, `red_cards` | Estadísticas acumuladas del club |
-| `last5_form` | Últimos 5 resultados en orden cronológico, p. ej. `WWDLW` |
-| `zone` | `Campeon`, `Champions League` (2.º–4.º), `Descenso` (últimos 3) o `Media tabla` |
+| Modelo | `StandardScaler` + `LogisticRegression` multiclase (`C = 0.01`) |
+| Variables | Diferencia de Elo antes del partido y forma de los últimos 8 partidos de cada club en la temporada: puntos, diferencia de goles y diferencia de tiros a puerta por partido |
+| Validación | Validación temporal: para cada una de las 4 temporadas previas a la última se entrena con las anteriores y se evalúa en esa temporada |
+| Prueba | El modelo final se entrena con todas las temporadas menos la última (2024/25), que queda como prueba |
+| Métricas | Log loss y accuracy por temporada de validación, accuracy, F1 macro y log loss de prueba, y la línea base "siempre gana el local" |
+| Seguimiento | Experimento MLflow `/Shared/smartdata_football/prediccion_resultados` |
+| Registro | Modelo `<catalogo>.gold.match_outcome_model` en Unity Catalog, con firma y ejemplo de entrada |
 
-El desempate es simplificado: algunas ligas usan enfrentamiento directo, y Ligue 1 2019/20 se cerró por promedio de puntos (temporada suspendida por COVID).
+La ventana de 8 partidos, `C = 0.01` y la regresión del Elo al 10 % se eligieron por log loss de validación. También se probaron variables de contexto (forma como local o visitante, días de descanso, recién ascendido, fase de la temporada y enfrentamientos directos), pero no mejoraron la validación.
 
-### Gold — `football_dev.gold.calendar_stats`
+## 9. Gobierno y seguridad
 
-Una fila por temporada, liga, jornada (`round`) y mes (`match_month`). Una jornada aparece en dos filas si sus partidos cruzan de un mes a otro. Trae `matches`, `total_goals`, `home_win_count`, `draw_count`, `away_win_count`, `comeback_count` y `total_cards`. `month_name` es el mes en español y `season_month_order` ordena de agosto (1) a julio (12).
+- **Unity Catalog** gobierna catálogo, esquemas, tablas externas y el modelo registrado.
+- **`5.Grants_Medallion`** otorga `USE CATALOG`, `USE SCHEMA` y `SELECT` sobre las tablas de las tres capas. En el job, sus celdas están marcadas con `%skip`; la versión completa está en `seguridad/`.
+- **Delta Sharing** (`6.DeltaSharing`) comparte solo las 5 tablas gold, sin historial, con el recipient `ExternalCompanys`. Como `1.Preparacion_Ambiente` recrea el catálogo, el notebook vuelve a agregar las tablas al share en cada ejecución. También desactiva los deletion vectors y reescribe los archivos (`REORG ... APPLY (PURGE)`), porque Power BI no lee tablas con esa característica.
+- **Secretos**: los tokens de Databricks viven en GitHub Secrets y el token de Delta Sharing no se guarda en el repositorio.
+- **Reversión**: `reversion/1. Drop-Medallion` elimina las tablas, sus archivos en S3 y el catálogo.
 
-### Gold — `football_dev.gold.club_elo`
+## 10. CI/CD
 
-Dos filas por partido (una por club) con el Elo antes y después: `elo_pre`, `opponent_elo_pre`, `elo_post` y `elo_change`, además de `goals_for`, `goals_against`, `result` (`W`/`D`/`L`) e `is_home`.
+Flujo de ramas: el trabajo se hace en `construccion` y llega a `main` por pull request.
 
-Parámetros del Elo:
-- Todos empiezan en 1500; los que entran después (ascendidos) empiezan en 1450.
-- K = 20, ventaja de local de 60 puntos y un multiplicador por diferencia de goles.
-- Al empezar cada temporada, el rating se acerca un 10 % a 1500. Ese valor dio el mejor log loss en la validación; los grandes siguen siendo grandes de un año a otro.
-- Cada liga se calcula por separado.
+Cada push a `main` ejecuta `.github/workflows/deploy-notebook.yml`:
 
-### Gold — `football_dev.gold.match_predictions`
+1. Exporta los notebooks de `proceso/` desde el workspace de origen.
+2. Los importa en el workspace de producción, en `/proyecto/notebooks`.
+3. Borra el job `WF_ADB` si existe y lo vuelve a crear sobre el cluster `ClusterSD`, con los parámetros de producción (`football_prod`, `s3-football-bucket`).
+4. Ejecuta el job y monitorea cada tarea hasta que termina.
 
-Predicción por partido:
-- Probabilidades `prob_home`, `prob_draw`, `prob_away` y la clase `predicted_result`, comparada con `actual_result` (`is_correct`).
-- El modelo (regresión logística con regularización `C = 0.01`) usa la diferencia de Elo y la forma de los últimos 8 partidos de cada club en la temporada: puntos, diferencia de goles y diferencia de tiros a puerta por partido. Los tiros salen de `silver.matches_transformed`. La ventana y `C` se eligieron por log loss de validación; variables de contexto (forma como local o visitante, descanso, recién ascendido, fase de la temporada, enfrentamientos directos) se probaron y no mejoraron.
-- Validación: para cada una de las 4 temporadas anteriores a la última, se entrena con las previas y se evalúa en esa temporada (`log_loss_validacion` y `accuracy_validacion` por temporada, más sus medias).
-- El modelo final se entrena con todas las temporadas menos la última, que queda como prueba (`split` = `entrenamiento` / `prueba`).
-- Las métricas (validación, accuracy, F1 macro, log loss y la línea base "siempre gana el local") quedan en el experimento MLflow `/Shared/smartdata_football/prediccion_resultados`.
-- El modelo se registra como `<catalogo>.gold.match_outcome_model`.
+Secrets requeridos: `DATABRICKS_ORIGIN_HOST`, `DATABRICKS_ORIGIN_TOKEN`, `DATABRICKS_DEST_HOST` y `DATABRICKS_DEST_TOKEN`.
 
-En una prueba local con los datos del repo acertó el 53,5 % de la temporada 2024/25 (log loss 0,984), frente al 42 % de apostar siempre por el local. Como casi todos los modelos de este tipo, rara vez predice empate.
+## 11. Consumo: dashboards
 
-## Cómo ejecutarlo
+Ambos dashboards tienen las mismas cinco páginas:
 
-1. Sube `datasets/leagues.csv`, `matches.csv` y `clubs.json` al contenedor `raw` de ADLS.
-2. Importa la carpeta `proceso/` a Databricks.
-3. Corre `1.Preparacion_Ambiente` y luego el resto, o deja que `WF_FOOTBALL` lo orqueste.
-4. Consulta gold:
+| Página | Contenido |
+|---|---|
+| Resumen | Partidos, goles por partido, % de victorias locales, precisión de tiro, evolución por temporada, resultados por liga y goles por mes |
+| Ligas | Ranking y evolución por temporada de la métrica elegida (goles por partido, % victorias locales, precisión de tiro, conversión, tarjetas, remontadas) |
+| Posiciones | Tabla de posiciones por liga y temporada, y Elo por club |
+| Predicciones | Acierto del modelo frente a "siempre local", acierto por liga y detalle de predicciones |
+| Club | Ficha del club: Elo final, cambio de Elo en la temporada, títulos, % de victorias, evolución del Elo e historial de partidos |
+
+- **Databricks AI/BI** (`dashboard/dashboard.lvdash.json`): se importa en el workspace y consulta `football_prod.gold`.
+- **Power BI** (`dashboard/dashboard.pbix`): se conecta al share con el conector Delta Sharing. Para actualizarlo hace falta un archivo `config.share` vigente del recipient; su token se ingresa como credencial en Power BI Desktop.
+
+## 12. Cómo ejecutarlo
+
+1. Sube `datasets/leagues.csv`, `matches.csv` y `clubs.json` a `s3://<bucket>/raw/`.
+2. Configura en Unity Catalog la credencial y la external location que dan acceso al bucket.
+3. Importa la carpeta `proceso/` en el workspace de Databricks.
+4. Ejecuta `1.Preparacion_Ambiente` y luego el resto en el orden del job, o deja que el CI/CD cree y ejecute `WF_ADB`.
+5. Ejecuta `6.DeltaSharing` para publicar las tablas gold.
+6. Importa `dashboard/dashboard.lvdash.json` en Databricks y abre `dashboard/dashboard.pbix` en Power BI Desktop.
+
+Consultas de ejemplo:
 
 ```sql
-SELECT * FROM football_dev.gold.season_stats
-ORDER BY season_year DESC, country;
+-- KPIs por temporada y liga
+SELECT season_year, league_name, conteo, total_goals / conteo AS goles_por_partido
+FROM football_prod.gold.season_stats
+ORDER BY season_year DESC, league_name;
 
+-- Campeones por temporada
 SELECT season_year, league_name, club, points, last5_form
-FROM football_dev.gold.standings
+FROM football_prod.gold.standings
 WHERE zone = 'Campeon'
 ORDER BY season_year DESC, league_name;
 
-SELECT split, AVG(is_correct) AS accuracy
-FROM football_dev.gold.match_predictions
+-- Acierto del modelo en entrenamiento y prueba
+SELECT split, AVG(is_correct) AS accuracy, COUNT(*) AS partidos
+FROM football_prod.gold.match_predictions
 GROUP BY split;
 ```
 
-## Equivalencia con el proyecto F1
+## 13. Resultados
 
-| F1 (`CICDSMARTDATA3007`) | Fútbol (`smartdata_football`) |
-|---|---|
-| `catalog_au` | `football_dev` |
-| `circuits` / `races` / `constructors` | `leagues` / `matches` / `clubs` |
-| filtro `race_year > 1978` | filtro `season_year >= 2010` |
-| `altitude_category`, `race_type`, `near_equator` | `goal_diff_category`, `result_type`, `match_intensity`, `is_classic` |
-| `golden_raced_partitioned` | `season_stats` |
-| job `WF_ADB` | job `WF_FOOTBALL` |
-| `constructors` no se usaba en silver | las 3 fuentes sí se cruzan en silver |
+- El pipeline procesa los 12 532 partidos en 5 tablas gold: 682 filas de tablas de posiciones y dos filas de Elo por partido.
+- El modelo acierta el **53,5 %** de los partidos de la temporada de prueba 2024/25 (log loss 0,984), frente al **42 %** de apostar siempre por el local. Como la mayoría de modelos de este tipo, rara vez predice empate.
+- Los resultados se publican de forma gobernada a un consumidor externo (Power BI) sin copiar datos, gracias a Delta Sharing.
+
+---
+
+**Autor:** César Valencia · [CesarValenciaM](https://github.com/CesarValenciaM)
