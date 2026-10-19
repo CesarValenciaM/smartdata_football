@@ -107,6 +107,11 @@ smartdata_football/
 ├── dashboard/
 │   ├── dashboard_ai_bi/
 │   │   └── dashboard.lvdash.json  # Dashboard AI/BI de Databricks
+│   ├── dashboard_app/             # Databricks App (Streamlit + iframe del AI/BI)
+│   │   ├── app.py
+│   │   ├── app.yaml
+│   │   ├── requirements.txt
+│   │   └── README.md
 │   └── powerbi/
 │       ├── dashboard.pbix         # Dashboard de Power BI
 │       ├── dashboard.pbit         # Plantilla de Power BI (sin datos)
@@ -241,6 +246,7 @@ Ambos dashboards tienen las mismas cinco páginas:
 | Club | Ficha del club: Elo final, cambio de Elo en la temporada, títulos, % de victorias, evolución del Elo e historial de partidos |
 
 - **Databricks AI/BI** (`dashboard/dashboard_ai_bi/dashboard.lvdash.json`): se importa en el workspace y consulta `football_prod.gold`.
+- **Databricks App** (`dashboard/dashboard_app/`): app Streamlit que incrusta el dashboard AI/BI publicado (iframe). Se despliega desde **Compute → Apps** apuntando a esta carpeta; el workspace debe permitir el dominio `*.databricksapps.com` en Embed dashboards.
 - **Power BI** (`dashboard/powerbi/dashboard.pbix`): se conecta al share con el conector Delta Sharing. Para actualizarlo hace falta un archivo `config.share` vigente del recipient; su token se ingresa como credencial en Power BI Desktop.
 
 ## 12. Cómo ejecutarlo
@@ -251,6 +257,7 @@ Ambos dashboards tienen las mismas cinco páginas:
 4. Ejecuta `1.Preparacion_Ambiente` y luego el resto en el orden del job, o deja que el CI/CD cree y ejecute `WF_ADB`.
 5. Ejecuta `delta-sharing/6.DeltaSharing` para publicar las tablas gold.
 6. Importa `dashboard/dashboard_ai_bi/dashboard.lvdash.json` en Databricks y abre `dashboard/powerbi/dashboard.pbix` en Power BI Desktop.
+7. (Opcional) Despliega la Databricks App desde `dashboard/dashboard_app/` (ver `dashboard/dashboard_app/README.md`).
 
 Consultas de ejemplo:
 
