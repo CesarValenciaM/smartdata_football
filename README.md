@@ -42,7 +42,7 @@ El flujo tiene cinco bloques:
 | **Almacenamiento** | Los archivos se suben a la carpeta `raw/` del bucket S3. Las tablas Delta de cada capa se guardan como tablas externas en `s3://<bucket>/<catalogo>/<capa>/<tabla>`. |
 | **Procesamiento** | Databricks ingesta los archivos en **bronze**, los limpia y enriquece en **silver** y genera las tablas analíticas de **gold**, incluido el rating Elo y las predicciones del modelo. |
 | **Machine learning** | MLflow registra el experimento (parámetros, métricas por temporada) y el modelo en Unity Catalog. |
-| **Consumo** | Un dashboard AI/BI de Databricks lee gold directamente; Power BI lee las mismas tablas a través de Delta Sharing. |
+| **Consumo** | Un dashboard AI/BI de Databricks lee gold; una Databricks App (Streamlit) lo muestra por iframe; Power BI lee las mismas tablas vía Delta Sharing. |
 
 El job `WF_ADB` orquesta las tareas en producción, y GitHub Actions lo recrea y ejecuta cada vez que se hace merge a `main`.
 
@@ -58,6 +58,7 @@ El job `WF_ADB` orquesta las tareas en producción, y GitHub Actions lo recrea y
 | MLflow + scikit-learn | Entrenamiento, validación, seguimiento y registro del modelo |
 | Delta Sharing | Publicación de las tablas gold para consumidores externos |
 | Databricks AI/BI | Dashboard dentro del workspace |
+| Databricks Apps | App Streamlit que incrusta el AI/BI publicado |
 | Power BI | Dashboard externo conectado por Delta Sharing |
 | GitHub Actions | CI/CD de notebooks y del job |
 
