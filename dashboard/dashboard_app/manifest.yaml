@@ -1,0 +1,3 @@
+version: 1
+name: "SmartData Football"
+description: "Databricks App que muestra el dashboard AI/BI de SmartData Football."

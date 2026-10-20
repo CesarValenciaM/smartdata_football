@@ -9,7 +9,8 @@ Dashboard interactivo sobre las 5 tablas gold del share `football_share`, leída
 | `dashboard.pbip` | Proyecto editable (local, no se versiona). |
 | `dashboard.SemanticModel/` | Modelo (TMDL): las 5 tablas Delta Sharing, dimensiones `Ligas`, `Temporadas` y `Clubes`, relaciones y la tabla `Medidas`. |
 | `dashboard.Report/` | Reporte (PBIR): 4 páginas más la ficha de club y tema `SmartDataFootball.json` (colores por liga). |
-| `Fútbol Big Five - Resumen por Temporada.lvdash.json` | Dashboard de Databricks (AI/BI). |
+| `dashboard.pbit` | Plantilla de Power BI (sin datos). |
+| `../dashboard_ai_bi/dashboard.lvdash.json` | Dashboard de Databricks (AI/BI) equivalente. |
 
 ## Modelo
 

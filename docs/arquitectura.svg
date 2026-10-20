@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="860" viewBox="0 0 1400 860" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" font-family="Segoe UI, Helvetica, Arial, sans-serif">
   <defs>
     <symbol id="ico-github" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
     <symbol id="ico-githubactions" viewBox="0 0 24 24"><path d="M10.984 13.836a.5.5 0 0 1-.353-.146l-.745-.743a.5.5 0 1 1 .706-.708l.392.391 1.181-1.18a.5.5 0 0 1 .708.707l-1.535 1.533a.504.504 0 0 1-.354.146zm9.353-.147l1.534-1.532a.5.5 0 0 0-.707-.707l-1.181 1.18-.392-.391a.5.5 0 1 0-.706.708l.746.743a.497.497 0 0 0 .706-.001zM4.527 7.452l2.557-1.585A1 1 0 0 0 7.09 4.17L4.533 2.56A1 1 0 0 0 3 3.406v3.196a1.001 1.001 0 0 0 1.527.85zm2.03-2.436L4 6.602V3.406l2.557 1.61zM24 12.5c0 1.93-1.57 3.5-3.5 3.5a3.503 3.503 0 0 1-3.46-3h-2.08a3.503 3.503 0 0 1-3.46 3 3.502 3.502 0 0 1-3.46-3h-.558c-.972 0-1.85-.399-2.482-1.042V17c0 1.654 1.346 3 3 3h.04c.244-1.693 1.7-3 3.46-3 1.93 0 3.5 1.57 3.5 3.5S13.43 24 11.5 24a3.502 3.502 0 0 1-3.46-3H8c-2.206 0-4-1.794-4-4V9.899A5.008 5.008 0 0 1 0 5c0-2.757 2.243-5 5-5s5 2.243 5 5a5.005 5.005 0 0 1-4.952 4.998A2.482 2.482 0 0 0 7.482 12h.558c.244-1.693 1.7-3 3.46-3a3.502 3.502 0 0 1 3.46 3h2.08a3.503 3.503 0 0 1 3.46-3c1.93 0 3.5 1.57 3.5 3.5zm-15 8c0 1.378 1.122 2.5 2.5 2.5s2.5-1.122 2.5-2.5-1.122-2.5-2.5-2.5S9 19.122 9 20.5zM5 9c2.206 0 4-1.794 4-4S7.206 1 5 1 1 2.794 1 5s1.794 4 4 4zm9 3.5c0-1.378-1.122-2.5-2.5-2.5S9 11.122 9 12.5s1.122 2.5 2.5 2.5 2.5-1.122 2.5-2.5zm9 0c0-1.378-1.122-2.5-2.5-2.5S18 11.122 18 12.5s1.122 2.5 2.5 2.5 2.5-1.122 2.5-2.5zm-13 8a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0zm2 0a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0zm12 0c0 1.93-1.57 3.5-3.5 3.5a3.503 3.503 0 0 1-3.46-3.002c-.007.001-.013.005-.021.005l-.506.017h-.017a.5.5 0 0 1-.016-.999l.506-.017c.018-.002.035.006.052.007A3.503 3.503 0 0 1 20.5 17c1.93 0 3.5 1.57 3.5 3.5zm-1 0c0-1.378-1.122-2.5-2.5-2.5S18 19.122 18 20.5s1.122 2.5 2.5 2.5 2.5-1.122 2.5-2.5z"/></symbol>
@@ -28,10 +28,10 @@
     </style>
   </defs>
 
-  <rect width="1400" height="860" fill="#FFFFFF"/>
+  <rect width="1400" height="900" fill="#FFFFFF"/>
 
   <text x="30" y="42" class="titulo">smartdata_football &#183; Arquitectura</text>
-  <text x="30" y="66" class="subtitulo">Arquitectura medallion en Databricks sobre AWS S3, con CI/CD en GitHub Actions, MLflow y consumo v&#237;a AI/BI y Delta Sharing (Power BI)</text>
+  <text x="30" y="66" class="subtitulo">Arquitectura medallion en Databricks sobre AWS S3, con CI/CD en GitHub Actions, MLflow y consumo v&#237;a AI/BI, Databricks App y Delta Sharing (Power BI)</text>
 
   <!-- ===================== CI/CD ===================== -->
   <rect x="20" y="88" width="1360" height="128" rx="12" fill="#F3F5F7" stroke="#CFD8DC"/>
@@ -180,75 +180,83 @@
 
   <!-- ===================== CONSUMO ===================== -->
   <text x="1150" y="262" class="banda">CONSUMO</text>
-  <rect x="1146" y="274" width="226" height="104" rx="10" fill="#FFFFFF" stroke="#FF3621" stroke-width="1.5"/>
+  <rect x="1146" y="274" width="226" height="92" rx="10" fill="#FFFFFF" stroke="#FF3621" stroke-width="1.5"/>
   <use href="#ico-databricks" x="1162" y="282" width="20" height="20" fill="#FF3621"/>
   <text x="1188" y="298" class="h">Databricks AI/BI</text>
-  <text x="1162" y="318" class="mono">dashboard.lvdash.json</text>
-  <text x="1162" y="340" class="s">Resumen &#183; Ligas &#183; Posiciones</text>
-  <text x="1162" y="356" class="s">Predicciones &#183; Club</text>
+  <text x="1162" y="318" class="mono">dashboard_ai_bi/</text>
+  <text x="1162" y="336" class="s">5 p&#225;ginas sobre gold</text>
+  <text x="1162" y="352" class="s">publicado con embed</text>
 
-  <rect x="1146" y="404" width="226" height="104" rx="10" fill="#E8F5E9" stroke="#1E9E63" stroke-width="1.5"/>
-  <use href="#ico-databricks" x="1162" y="412" width="20" height="20" fill="#FF3621"/>
-  <text x="1188" y="428" class="h">Delta Sharing</text>
-  <text x="1162" y="448" class="t">6.DeltaSharing</text>
-  <text x="1162" y="468" class="mono">FOOTBALL_SHARE</text>
-  <text x="1162" y="486" class="s">recipient ExternalCompanys</text>
+  <rect x="1146" y="382" width="226" height="92" rx="10" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.5"/>
+  <use href="#ico-databricks" x="1162" y="390" width="20" height="20" fill="#FF3621"/>
+  <text x="1188" y="406" class="h">Databricks App</text>
+  <text x="1162" y="426" class="mono">dashboard_app/</text>
+  <text x="1162" y="444" class="s">Streamlit + iframe</text>
+  <text x="1162" y="460" class="s">*.databricksapps.com</text>
 
-  <rect x="1146" y="536" width="226" height="104" rx="10" fill="#FFFDE7" stroke="#F2C811" stroke-width="1.5"/>
-  <use href="#ico-powerbi" x="1162" y="544" width="20" height="20" fill="#F2C811"/>
-  <text x="1188" y="560" class="h">Power BI</text>
-  <text x="1162" y="580" class="mono">dashboard.pbix</text>
-  <text x="1162" y="602" class="s">mismas 5 p&#225;ginas, conector</text>
-  <text x="1162" y="618" class="s">Delta Sharing (token)</text>
+  <rect x="1146" y="490" width="226" height="92" rx="10" fill="#E8F5E9" stroke="#1E9E63" stroke-width="1.5"/>
+  <use href="#ico-databricks" x="1162" y="498" width="20" height="20" fill="#FF3621"/>
+  <text x="1188" y="514" class="h">Delta Sharing</text>
+  <text x="1162" y="534" class="t">6.DeltaSharing</text>
+  <text x="1162" y="552" class="mono">FOOTBALL_SHARE</text>
+  <text x="1162" y="568" class="s">recipient ExternalCompanys</text>
 
-  <path d="M1100,380 L1142,326" class="linea"/>
-  <path d="M1100,440 L1142,456" class="linea"/>
-  <path d="M1259,508 L1259,532" class="linea"/>
+  <rect x="1146" y="598" width="226" height="92" rx="10" fill="#FFFDE7" stroke="#F2C811" stroke-width="1.5"/>
+  <use href="#ico-powerbi" x="1162" y="606" width="20" height="20" fill="#F2C811"/>
+  <text x="1188" y="622" class="h">Power BI</text>
+  <text x="1162" y="642" class="mono">dashboard.pbix</text>
+  <text x="1162" y="660" class="s">mismas 5 p&#225;ginas, conector</text>
+  <text x="1162" y="676" class="s">Delta Sharing (token)</text>
+
+  <path d="M1100,380 L1142,320" class="linea"/>
+  <path d="M1259,366 L1259,378" class="linea"/>
+  <path d="M1100,456 L1142,536" class="linea"/>
+  <path d="M1259,582 L1259,594" class="linea"/>
 
   <!-- ===================== OPERACION ===================== -->
-  <rect x="20" y="712" width="1360" height="128" rx="12" fill="#F3F5F7" stroke="#CFD8DC"/>
-  <text x="36" y="734" class="banda">ORQUESTACI&#211;N DEL JOB WF_ADB</text>
+  <rect x="20" y="752" width="1360" height="128" rx="12" fill="#F3F5F7" stroke="#CFD8DC"/>
+  <text x="36" y="774" class="banda">ORQUESTACI&#211;N DEL JOB WF_ADB</text>
 
   <g>
-    <rect x="40" y="750" width="170" height="70" rx="8" fill="#FFFFFF" stroke="#90A4AE"/>
-    <text x="54" y="772" class="h">1 &#183; Preparaci&#243;n</text>
-    <text x="54" y="792" class="s">cat&#225;logo, esquemas</text>
-    <text x="54" y="808" class="s">y tablas vac&#237;as</text>
+    <rect x="40" y="790" width="170" height="70" rx="8" fill="#FFFFFF" stroke="#90A4AE"/>
+    <text x="54" y="812" class="h">1 &#183; Preparaci&#243;n</text>
+    <text x="54" y="832" class="s">cat&#225;logo, esquemas</text>
+    <text x="54" y="848" class="s">y tablas vac&#237;as</text>
 
-    <rect x="250" y="750" width="190" height="70" rx="8" fill="#FFFFFF" stroke="#90A4AE"/>
-    <text x="264" y="772" class="h">2 &#183; Ingesta bronze</text>
-    <text x="264" y="792" class="s">clubs &#183; leagues &#183; matches</text>
-    <text x="264" y="808" class="s">(3 tareas en paralelo)</text>
+    <rect x="250" y="790" width="190" height="70" rx="8" fill="#FFFFFF" stroke="#90A4AE"/>
+    <text x="264" y="812" class="h">2 &#183; Ingesta bronze</text>
+    <text x="264" y="832" class="s">clubs &#183; leagues &#183; matches</text>
+    <text x="264" y="848" class="s">(3 tareas en paralelo)</text>
 
-    <rect x="480" y="750" width="160" height="70" rx="8" fill="#FFFFFF" stroke="#90A4AE"/>
-    <text x="494" y="772" class="h">3 &#183; Transform</text>
-    <text x="494" y="792" class="s">bronze &#8594; silver</text>
+    <rect x="480" y="790" width="160" height="70" rx="8" fill="#FFFFFF" stroke="#90A4AE"/>
+    <text x="494" y="812" class="h">3 &#183; Transform</text>
+    <text x="494" y="832" class="s">bronze &#8594; silver</text>
 
-    <rect x="680" y="742" width="150" height="40" rx="8" fill="#FFFFFF" stroke="#90A4AE"/>
-    <text x="694" y="767" class="h">4 &#183; Load (gold)</text>
-    <rect x="680" y="790" width="150" height="40" rx="8" fill="#FFFFFF" stroke="#90A4AE"/>
-    <text x="694" y="815" class="h">7 &#183; Elo (gold)</text>
+    <rect x="680" y="782" width="150" height="40" rx="8" fill="#FFFFFF" stroke="#90A4AE"/>
+    <text x="694" y="807" class="h">4 &#183; Load (gold)</text>
+    <rect x="680" y="830" width="150" height="40" rx="8" fill="#FFFFFF" stroke="#90A4AE"/>
+    <text x="694" y="855" class="h">7 &#183; Elo (gold)</text>
 
-    <rect x="870" y="790" width="180" height="40" rx="8" fill="#FFFFFF" stroke="#90A4AE"/>
-    <text x="884" y="815" class="h">8 &#183; Predicci&#243;n (ML)</text>
+    <rect x="870" y="830" width="180" height="40" rx="8" fill="#FFFFFF" stroke="#90A4AE"/>
+    <text x="884" y="855" class="h">8 &#183; Predicci&#243;n (ML)</text>
 
-    <rect x="1090" y="750" width="130" height="70" rx="8" fill="#FFFFFF" stroke="#90A4AE"/>
-    <text x="1104" y="772" class="h">5 &#183; Grants</text>
-    <text x="1104" y="792" class="s">espera Load y</text>
-    <text x="1104" y="808" class="s">Predicci&#243;n</text>
+    <rect x="1090" y="790" width="130" height="70" rx="8" fill="#FFFFFF" stroke="#90A4AE"/>
+    <text x="1104" y="812" class="h">5 &#183; Grants</text>
+    <text x="1104" y="832" class="s">espera Load y</text>
+    <text x="1104" y="848" class="s">Predicci&#243;n</text>
 
-    <rect x="1250" y="750" width="116" height="70" rx="8" fill="#FFFFFF" stroke="#90A4AE" stroke-dasharray="5 3"/>
-    <text x="1262" y="772" class="h">6 &#183; Sharing</text>
-    <text x="1262" y="792" class="s">se ejecuta</text>
-    <text x="1262" y="808" class="s">aparte</text>
+    <rect x="1250" y="790" width="116" height="70" rx="8" fill="#FFFFFF" stroke="#90A4AE" stroke-dasharray="5 3"/>
+    <text x="1262" y="812" class="h">6 &#183; Sharing</text>
+    <text x="1262" y="832" class="s">se ejecuta</text>
+    <text x="1262" y="848" class="s">aparte</text>
 
-    <path d="M210,785 L246,785" class="linea"/>
-    <path d="M440,785 L476,785" class="linea"/>
-    <path d="M640,780 L676,762" class="linea"/>
-    <path d="M640,790 L676,810" class="linea"/>
-    <path d="M830,810 L866,810" class="linea"/>
-    <path d="M830,762 L1086,772" class="linea"/>
-    <path d="M1050,810 L1086,798" class="linea"/>
-    <path d="M1220,785 L1246,785" class="linea_gris"/>
+    <path d="M210,825 L246,825" class="linea"/>
+    <path d="M440,825 L476,825" class="linea"/>
+    <path d="M640,820 L676,802" class="linea"/>
+    <path d="M640,830 L676,850" class="linea"/>
+    <path d="M830,850 L866,850" class="linea"/>
+    <path d="M830,802 L1086,812" class="linea"/>
+    <path d="M1050,850 L1086,838" class="linea"/>
+    <path d="M1220,825 L1246,825" class="linea_gris"/>
   </g>
 </svg>
